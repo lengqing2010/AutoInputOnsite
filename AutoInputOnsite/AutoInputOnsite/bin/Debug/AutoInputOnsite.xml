@@ -1,0 +1,46 @@
+﻿<?xml version="1.0"?>
+<doc>
+<assembly>
+<name>
+AutoInputOnsite
+</name>
+</assembly>
+<members>
+<member name="M:AutoInputOnsite.AutoImportNouhinsyo.Ninnsyou">
+	<summary>
+ 認証情報
+ </summary>
+	<remarks></remarks>
+</member><member name="M:AutoInputOnsite.AutoImportNouhinsyo.WaitComplete(SHDocVw.InternetExplorerMedium@)">
+	<summary>
+ Wait For Complete
+ </summary>
+	<param name="webApp"></param>
+	<remarks></remarks>
+</member><member name="M:AutoInputOnsite.AutoImportCsv.Ninnsyou">
+	<summary>
+ 認証情報
+ </summary>
+	<remarks></remarks>
+</member><member name="M:AutoInputOnsite.AutoImportCsv.WaitComplete(SHDocVw.InternetExplorerMedium@)">
+	<summary>
+ Wait For Complete
+ </summary>
+	<param name="webApp"></param>
+	<remarks></remarks>
+</member><member name="P:AutoInputOnsite.My.Resources.Resources.ResourceManager">
+	<summary>
+  このクラスで使用されているキャッシュされた ResourceManager インスタンスを返します。
+</summary>
+</member><member name="P:AutoInputOnsite.My.Resources.Resources.Culture">
+	<summary>
+  厳密に型指定されたこのリソース クラスを使用して、すべての検索リソースに対し、
+  現在のスレッドの CurrentUICulture プロパティをオーバーライドします。
+</summary>
+</member><member name="T:AutoInputOnsite.My.Resources.Resources">
+	<summary>
+  ローカライズされた文字列などを検索するための、厳密に型指定されたリソース クラスです。
+</summary>
+</member>
+</members>
+</doc>
