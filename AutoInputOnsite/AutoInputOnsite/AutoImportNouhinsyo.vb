@@ -131,7 +131,7 @@ Public Class AutoImportNouhinsyo
         'フォルダ読み
         Dim folder_Hattyuu As String = ConfigurationManager.AppSettings("Folder_Hattyuu").ToString()
         Dim folder_Hattyuu_kanryou As String = ConfigurationManager.AppSettings("Folder_Hattyuu_kanryou").ToString()
-        'Dim folder_Nouki As String = ConfigurationManager.AppSettings("Folder_Nouki").ToString()
+        Dim folder_Nouki As String = ConfigurationManager.AppSettings("Folder_Nouki").ToString()
         If Not System.IO.Directory.Exists(folder_Hattyuu) Then
             My.Computer.FileSystem.CreateDirectory(folder_Hattyuu)
         End If
@@ -140,9 +140,9 @@ Public Class AutoImportNouhinsyo
             My.Computer.FileSystem.CreateDirectory(folder_Hattyuu_kanryou)
         End If
 
-        'If Not System.IO.Directory.Exists(folder_Nouki) Then
-        '    My.Computer.FileSystem.CreateDirectory(folder_Nouki)
-        'End If
+        If Not System.IO.Directory.Exists(folder_Nouki) Then
+            My.Computer.FileSystem.CreateDirectory(folder_Nouki)
+        End If
 
 
         NinnsyouBackgroundWorker = New BackgroundWorker
@@ -177,10 +177,20 @@ Public Class AutoImportNouhinsyo
         DoStep1_Login()
 
 
-        Dim files As List(Of String) = GetAllFiles(folder_Hattyuu, "*.csv")
+        Dim files As List(Of String) = GetAllFiles(folder_Nouki, "*.csv")
+
+        Dim firsOpenKbn As Boolean = True
 
         For Each fl As String In files
 
+
+            If firsOpenKbn = False Then
+                GetElementBy(Ie, "fraHead", "input", "value", "絞込検索").click()
+                WaitComplete(Ie)
+
+
+            End If
+            firsOpenKbn = False
             AddMsg("取込：" & fl)
 
             Dim 事業所, 得意先, 下店, 現場名, 備考, 日付連番 As String
@@ -192,16 +202,110 @@ Public Class AutoImportNouhinsyo
             備考 = fl.Split("-"c)(4)
             日付連番 = fl.Split("-"c)(5)
 
-            'While
-            DoStep2_Sinki(事業所, 得意先, 下店, 現場名, 備考, 日付連番, fl)
 
-            AddMsg("移動CSV：" & fl & "→" & folder_Hattyuu_kanryou)
-            If System.IO.File.Exists(folder_Hattyuu_kanryou & fl) Then
+            '見積検索
+            AddMsg("見積検索")
+            DoStep1_PoupuSentaku(事業所, 得意先, 下店, 現場名, 備考, 日付連番, fl)
 
-                FileSystem.Rename(folder_Hattyuu_kanryou & fl, folder_Hattyuu_kanryou & fl & ".bk." & Now.ToString("yyyyMMddHHmmss"))
-            End If
+            System.Threading.Thread.Sleep(50)
+            WaitComplete(Ie)
 
-            System.IO.File.Move(folder_Hattyuu & fl, folder_Hattyuu_kanryou & fl)
+            '納期日設定
+            DoStep2_Set()
+
+            System.Threading.Thread.Sleep(50)
+            WaitComplete(Ie)
+            System.Threading.Thread.Sleep(50)
+            WaitComplete(Ie)
+            System.Threading.Thread.Sleep(50)
+            WaitComplete(Ie)
+
+            Dim strData As String() = System.IO.File.ReadAllLines(folder_Nouki & fl)
+
+            Dim code As String = ""
+            Dim nouki As String = ""
+
+            For jjj As Integer = 0 To strData.Length - 1
+                If strData(jjj).Trim <> "" Then
+                    code = strData(jjj).Split(","c)(1).Trim
+                    nouki = CDate(strData(jjj).Split(","c)(2).Trim).ToString("yyyy/MM/dd")
+
+
+
+                    Dim Doc As mshtml.HTMLDocument
+                    Dim eles As mshtml.IHTMLElementCollection
+                    Doc = CType(Ie.Document, mshtml.HTMLDocument)
+                    Dim fra As mshtml.HTMLWindow2 = GetFrameByName(Ie, "fraMitBody")
+
+
+                    Doc = CType(fra.document, mshtml.HTMLDocument)
+                    eles = Doc.getElementsByTagName("input")
+
+
+                    Dim cbEles As mshtml.IHTMLElementCollection = Doc.getElementsByName("strMeisaiKey")
+                    Dim nouhinDateEles As mshtml.IHTMLElementCollection = Doc.getElementsByName("strSiteiNouhinDate")
+
+                    For i As Integer = 0 To cbEles.length - 1
+                        Dim tr As mshtml.IHTMLTableRow = CType(CType(cbEles.item(i), mshtml.IHTMLElement).parentElement.parentElement, mshtml.IHTMLTableRow)
+                        Dim td As mshtml.HTMLTableCell = CType(tr.cells.item(1), mshtml.HTMLTableCell)
+                        Dim table As mshtml.IHTMLTable = CType(CType(cbEles.item(i), mshtml.IHTMLElement).parentElement.parentElement.parentElement.parentElement, mshtml.IHTMLTable)
+
+                        Dim isHaveDate As Boolean = False
+
+                        If td.innerText = code Then
+                            Dim sel As mshtml.IHTMLSelectElement = CType(nouhinDateEles.item(i), mshtml.IHTMLSelectElement)
+
+                            For j As Integer = 0 To sel.length
+                                If CType(sel.item(j), mshtml.IHTMLOptionElement).value.IndexOf(nouki) > 0 Then
+                                    CType(sel.item(j), mshtml.IHTMLOptionElement).selected = True
+                                    isHaveDate = True
+                                    Exit For
+                                End If
+                            Next
+
+
+                            If Not isHaveDate Then
+                                MsgBox("納品希望日：[" & nouki & "]がありません")
+                                Exit Sub
+                            End If
+                        End If
+
+
+                    Next
+
+
+
+
+
+
+                End If
+
+
+
+
+            Next
+
+            GetElementBy(Ie, "fraMitBody", "select", "name", "strBukkenKbn").setAttribute("value", "01")
+            GetElementBy(Ie, "fraMitBody", "input", "value", "発　注").click()
+            System.Threading.Thread.Sleep(50)
+            WaitComplete(Ie)
+            System.Threading.Thread.Sleep(50)
+            WaitComplete(Ie)
+            System.Threading.Thread.Sleep(50)
+            WaitComplete(Ie)
+
+            GetElementBy(Ie, "fraMitMenu", "a", "innertext", "[見積一覧を再表示]").click()
+            System.Threading.Thread.Sleep(50)
+            WaitComplete(Ie)
+
+
+            'AddMsg("移動CSV：" & fl & "→" & folder_Hattyuu_kanryou)
+            'If System.IO.File.Exists(folder_Hattyuu_kanryou & fl) Then
+
+            '    FileSystem.Rename(folder_Hattyuu_kanryou & fl, folder_Hattyuu_kanryou & fl & ".bk." & Now.ToString("yyyyMMddHHmmss"))
+            'End If
+
+            'System.IO.File.Move(folder_Hattyuu & fl, folder_Hattyuu_kanryou & fl)
 
         Next
 
@@ -231,132 +335,226 @@ Public Class AutoImportNouhinsyo
         AddMsg("物販明細")
         ''＊＊＊ 物販明細
         GetElementBy(Ie, "Main", "input", "value", "物販明細").click()
-        'WaitComplete(Ie)
-        ' System.Threading.Thread.Sleep(1500)
+        WaitComplete(Ie)
+        System.Threading.Thread.Sleep(200)
 
 
-        '新規見積もり
-        AddMsg("新規見積")
-        DoStep1_SinkiMitumori()
 
     End Sub
     'Step 1 新規見積もり
-    Public Sub DoStep1_SinkiMitumori()
+    Public Sub DoStep1_PoupuSentaku(ByVal 事業所 As String, ByVal 得意先 As String, ByVal 下店 As String, ByVal 現場名 As String, ByVal 備考 As String, ByVal 日付連番 As String, ByVal fl As String)
         Dim ShellWindows As New SHDocVw.ShellWindows
         Try
+
+
+            AddMsg("見積検索 POPUP")
             Dim cIe As SHDocVw.InternetExplorerMedium = GetPopupWindow("OnSite", "mitSearch.asp")
-            GetElementBy(cIe, "", "input", "value", "新規見積").click()
+
+            While cIe Is Nothing
+                System.Threading.Thread.Sleep(100)
+                cIe = GetPopupWindow("OnSite", "mitSearch.asp")
+            End While
+
+            WaitComplete(cIe)
+            GetElementBy(cIe, "", "input", "name", "strGenbaMei").innerText = 現場名
+            GetElementBy(cIe, "", "input", "name", "strUriJgy").click()
+            System.Threading.Thread.Sleep(100)
+            WaitComplete(cIe)
+
+
+
+            AddMsg("事業所検索 POPUP")
+            Dim cIe2 As SHDocVw.InternetExplorerMedium = GetPopupWindow("OnSite", "jgyKensaku.asp")
+            While cIe2 Is Nothing
+                System.Threading.Thread.Sleep(100)
+                cIe2 = GetPopupWindow("OnSite", "jgyKensaku.asp")
+            End While
+
+            System.Threading.Thread.Sleep(100)
+            WaitComplete(cIe2)
+            GetElementBy(cIe2, "", "input", "name", "strJgyCd").innerText = 事業所
+            GetElementBy(cIe2, "", "input", "value", "検　索").click()
+            System.Threading.Thread.Sleep(100)
+            'WaitComplete(cIe2)
+
+            System.Threading.Thread.Sleep(100)
+            WaitComplete(cIe)
+            GetElementBy(cIe, "", "input", "value", "検　索").click()
             System.Threading.Thread.Sleep(100)
             WaitComplete(Ie)
+
+
+
+
+
             Exit Sub
         Catch ex As Exception
-            DoStep1_SinkiMitumori()
+            'DoStep1_SinkiMitumori(事業所, 得意先, 下店, 現場名, 備考, 日付連番, fl)
             Exit Sub
         End Try
     End Sub
     'Step 2 （WHILE）
-    Public Sub DoStep2_Sinki(ByVal 事業所 As String, ByVal 得意先 As String, ByVal 下店 As String, ByVal 現場名 As String, ByVal 備考 As String, ByVal 日付連番 As String, ByVal fl As String)
+    Public Sub DoStep2_Set(Optional ByVal startIdx As Integer = 0)
 
-        Dim folder_Hattyuu As String = ConfigurationManager.AppSettings("Folder_Hattyuu").ToString()
-
-        System.Threading.Thread.Sleep(500)
-        WaitComplete(Ie)
-
-        AddMsg("    事業所：" & 事業所)
-        AddMsg("    得意先：" & 得意先)
-        AddMsg("    下店：" & 下店)
-        AddMsg("    備考：" & 備考)
-        AddMsg("    現場名：" & 現場名)
-
-        '見積見出入力
-        GetElementBy(Ie, "fraMitBody", "input", "name", "strJgyCdText").innerText = 事業所
-        GetElementBy(Ie, "fraMitBody", "input", "name", "strTokMeiText").innerText = 得意先
-        GetElementBy(Ie, "fraMitBody", "input", "name", "strOtdMeiText").innerText = 下店
-
-        GetElementBy(Ie, "fraMitBody", "input", "name", "strBikouMei").innerText = 備考
-        GetElementBy(Ie, "fraMitBody", "input", "name", "strGenbaMei").innerText = 現場名
-
-        GetElementBy(Ie, "fraMitBody", "select", "name", "aryKijyunSyouhinBunrui").setAttribute("value", "A0001,サッシ,L90000")
-        AddMsg("    納材店なしで内訳入力へ CLICK")
-        GetElementBy(Ie, "fraMitBody", "input", "name", "btnUtiwake").click()
-        System.Threading.Thread.Sleep(500)
-        WaitComplete(Ie)
+        Dim Doc As mshtml.HTMLDocument
+        Dim eles As mshtml.IHTMLElementCollection
+        Doc = CType(Ie.Document, mshtml.HTMLDocument)
+        Dim fra As mshtml.HTMLWindow2 = GetFrameByName(Ie, "fraHyou")
 
 
-        '見積内訳入力
-        Try
-            Dim ele As mshtml.IHTMLElement = GetElementBy(Ie, "fraMitBody", "DIV", "classname", "ttl")
-            If ele.innerText <> "見積内訳入力" Then
-                DoStep2_Sinki(事業所, 得意先, 下店, 現場名, 備考, 日付連番, fl)
-                Exit Sub
-            End If
-            AddMsg("    見積内訳入力 CSV取込 CLICK")
-            GetElementBy(Ie, "fraMitBody", "input", "value", "CSV取込").click()
-        Catch ex As Exception
-            DoStep2_Sinki(事業所, 得意先, 下店, 現場名, 備考, 日付連番, fl)
-            Exit Sub
-        End Try
+        Doc = CType(fra.document, mshtml.HTMLDocument)
+        eles = Doc.getElementsByTagName("input")
+
+        For i As Integer = startIdx To eles.length - 1
+            Dim ele As mshtml.IHTMLElement = CType(eles.item(i), mshtml.IHTMLElement)
+            Try
+                If ele.getAttribute("name").ToString = "strMitKbnHen" Then
+                    Dim tr As mshtml.IHTMLTableRow = CType(ele.parentElement.parentElement, mshtml.IHTMLTableRow)
+                    Dim td As mshtml.HTMLTableCell = CType(tr.cells.item(4), mshtml.HTMLTableCell)
+                    'Return ele
+                    If td.innerText = "作成中" Then
+                        ele.click()
+                        GetElementBy(Ie, "fraHead", "input", "value", "発注納期非表示").click()
+                        WaitComplete(Ie)
 
 
-        WaitComplete(Ie)
+                        Dim Doc1 As mshtml.HTMLDocument = CType(Ie.Document, mshtml.HTMLDocument)
+                        Dim fra1 As mshtml.HTMLWindow2 = GetFrameByName(Ie, "fraMitBody")
+                        Doc1 = CType(fra1.document, mshtml.HTMLDocument)
+
+                        If Doc1.body.innerText.IndexOf("発注可能な見積ではありません") > 0 Then
+                            Ie.GoBack()
+                            WaitComplete(Ie)
+                            DoStep2_Set(i + 1)
+                        Else
+                            Exit Sub
+                        End If
 
 
-        Try
+                        'If GetElementBy(Ie, "fraMitBody", "input", "value", "前画面") IsNot Nothing Then
+                        '    Ie.GoBack()
+                        '    WaitComplete(Ie)
+                        '    DoStep2_Set(i + 1)
 
-            Me.BackgroundWorker.RunWorkerAsync(folder_Hattyuu & fl)
-            System.Threading.Thread.Sleep(500)
+                        'Else
+                        '    Exit Sub
+                        'End If
 
-            'Dim csvPopup As SHDocVw.InternetExplorerMedium = GetPopupWindow("OnSite", "fileYomikomiSiji.asp")
+                    End If
+                End If
+            Catch ex As Exception
 
-            AddMsg("    見積内訳入力 CSV取込 参　照 CLICK")
-            GetElementBy(GetPopupWindow("OnSite", "fileYomikomiSiji.asp"), "", "input", "value", "参　照").click()
-            System.Threading.Thread.Sleep(1000)
-            AddMsg("    見積内訳入力 CSV取込 取　込 CLICK")
-            GetElementBy(GetPopupWindow("OnSite", "fileYomikomiSiji.asp"), "", "input", "value", "取　込").click()
-            System.Threading.Thread.Sleep(100)
+            End Try
 
-            WaitComplete(Ie)
-            AddMsg("    商品コード複数入力 次　へ CLICK")
-            GetElementBy(Ie, "fraMitBody", "input", "value", "次　へ").click()
-            WaitComplete(Ie)
-            AddMsg("    商品コード複数入力 次　へ CLICK")
-            GetElementBy(Ie, "fraMitBody", "input", "value", "次　へ").click()
-            WaitComplete(Ie)
-            AddMsg("    商品コード複数入力 次　へ CLICK")
-            GetElementBy(Ie, "fraMitBody", "input", "value", "次　へ").click()
 
-            WaitComplete(Ie)
-            WaitComplete(Ie)
-            WaitComplete(Ie)
+        Next
 
-            '寸法入力
-            WaitComplete(Ie)
-            AddMsg("    寸法入力 次　へ CLICK")
-            GetElementBy(Ie, "fraMitBody", "input", "value", "次　へ").click()
-            WaitComplete(Ie)
-            WaitComplete(Ie)
-            AddMsg("    寸法入力 次　へ CLICK")
-            GetElementBy(Ie, "fraMitBody", "input", "value", "次　へ").click()
-            WaitComplete(Ie)
-            WaitComplete(Ie)
-            AddMsg("    寸法入力 次　へ CLICK")
-            GetElementBy(Ie, "fraMitBody", "input", "value", "次　へ").click()
-            WaitComplete(Ie)
-            WaitComplete(Ie)
-            AddMsg("    単価入力 見積内訳入力へ CLICK")
-            GetElementBy(Ie, "fraMitBody", "input", "value", "見積内訳入力へ").click()
-            WaitComplete(Ie)
-            Dim ele As mshtml.IHTMLElement = GetElementBy(Ie, "fraMitBody", "DIV", "classname", "ttl")
-            Dim kekka As String = ele.innerText
-            AddMsg("    新規見積 CLICK")
-            GetElementBy(Ie, "fraMitMenu", "a", "innertext", "[新規見積]").click()
-            WaitComplete(Ie)
-            WaitComplete(Ie)
+        'For Each ele As mshtml.IHTMLElement In eles
 
-        Catch ex As Exception
-            DoStep2_Sinki(事業所, 得意先, 下店, 現場名, 備考, 日付連番, fl)
-            Exit Sub
-        End Try
+
+        'Next
+
+
+        'Dim folder_Nouki As String = ConfigurationManager.AppSettings("folder_Nouki").ToString()
+
+        'System.Threading.Thread.Sleep(500)
+        'WaitComplete(Ie)
+
+        'AddMsg("    事業所：" & 事業所)
+        'AddMsg("    得意先：" & 得意先)
+        'AddMsg("    下店：" & 下店)
+        'AddMsg("    備考：" & 備考)
+        'AddMsg("    現場名：" & 現場名)
+
+        ''見積見出入力
+        'GetElementBy(Ie, "fraMitBody", "input", "name", "strJgyCdText").innerText = 事業所
+        'GetElementBy(Ie, "fraMitBody", "input", "name", "strTokMeiText").innerText = 得意先
+        'GetElementBy(Ie, "fraMitBody", "input", "name", "strOtdMeiText").innerText = 下店
+
+        'GetElementBy(Ie, "fraMitBody", "input", "name", "strBikouMei").innerText = 備考
+        'GetElementBy(Ie, "fraMitBody", "input", "name", "strGenbaMei").innerText = 現場名
+
+        'GetElementBy(Ie, "fraMitBody", "select", "name", "aryKijyunSyouhinBunrui").setAttribute("value", "A0001,サッシ,L90000")
+        'AddMsg("    納材店なしで内訳入力へ CLICK")
+        'GetElementBy(Ie, "fraMitBody", "input", "name", "btnUtiwake").click()
+        'System.Threading.Thread.Sleep(500)
+        'WaitComplete(Ie)
+
+
+        ''見積内訳入力
+        'Try
+        '    Dim ele As mshtml.IHTMLElement = GetElementBy(Ie, "fraMitBody", "DIV", "classname", "ttl")
+        '    If ele.innerText <> "見積内訳入力" Then
+        '        DoStep2_Sinki(事業所, 得意先, 下店, 現場名, 備考, 日付連番, fl)
+        '        Exit Sub
+        '    End If
+        '    AddMsg("    見積内訳入力 CSV取込 CLICK")
+        '    GetElementBy(Ie, "fraMitBody", "input", "value", "CSV取込").click()
+        'Catch ex As Exception
+        '    DoStep2_Sinki(事業所, 得意先, 下店, 現場名, 備考, 日付連番, fl)
+        '    Exit Sub
+        'End Try
+
+
+        'WaitComplete(Ie)
+
+
+        'Try
+
+        '    Me.BackgroundWorker.RunWorkerAsync(folder_Nouki & fl)
+        '    System.Threading.Thread.Sleep(500)
+
+        '    'Dim csvPopup As SHDocVw.InternetExplorerMedium = GetPopupWindow("OnSite", "fileYomikomiSiji.asp")
+
+        '    AddMsg("    見積内訳入力 CSV取込 参　照 CLICK")
+        '    GetElementBy(GetPopupWindow("OnSite", "fileYomikomiSiji.asp"), "", "input", "value", "参　照").click()
+        '    System.Threading.Thread.Sleep(1000)
+        '    AddMsg("    見積内訳入力 CSV取込 取　込 CLICK")
+        '    GetElementBy(GetPopupWindow("OnSite", "fileYomikomiSiji.asp"), "", "input", "value", "取　込").click()
+        '    System.Threading.Thread.Sleep(100)
+
+        '    WaitComplete(Ie)
+        '    AddMsg("    商品コード複数入力 次　へ CLICK")
+        '    GetElementBy(Ie, "fraMitBody", "input", "value", "次　へ").click()
+        '    WaitComplete(Ie)
+        '    AddMsg("    商品コード複数入力 次　へ CLICK")
+        '    GetElementBy(Ie, "fraMitBody", "input", "value", "次　へ").click()
+        '    WaitComplete(Ie)
+        '    AddMsg("    商品コード複数入力 次　へ CLICK")
+        '    GetElementBy(Ie, "fraMitBody", "input", "value", "次　へ").click()
+
+        '    WaitComplete(Ie)
+        '    WaitComplete(Ie)
+        '    WaitComplete(Ie)
+
+        '    '寸法入力
+        '    WaitComplete(Ie)
+        '    AddMsg("    寸法入力 次　へ CLICK")
+        '    GetElementBy(Ie, "fraMitBody", "input", "value", "次　へ").click()
+        '    WaitComplete(Ie)
+        '    WaitComplete(Ie)
+        '    AddMsg("    寸法入力 次　へ CLICK")
+        '    GetElementBy(Ie, "fraMitBody", "input", "value", "次　へ").click()
+        '    WaitComplete(Ie)
+        '    WaitComplete(Ie)
+        '    AddMsg("    寸法入力 次　へ CLICK")
+        '    GetElementBy(Ie, "fraMitBody", "input", "value", "次　へ").click()
+        '    WaitComplete(Ie)
+        '    WaitComplete(Ie)
+        '    AddMsg("    単価入力 見積内訳入力へ CLICK")
+        '    GetElementBy(Ie, "fraMitBody", "input", "value", "見積内訳入力へ").click()
+        '    WaitComplete(Ie)
+        '    Dim ele As mshtml.IHTMLElement = GetElementBy(Ie, "fraMitBody", "DIV", "classname", "ttl")
+        '    Dim kekka As String = ele.innerText
+        '    AddMsg("    新規見積 CLICK")
+        '    GetElementBy(Ie, "fraMitMenu", "a", "innertext", "[新規見積]").click()
+        '    WaitComplete(Ie)
+        '    WaitComplete(Ie)
+
+        'Catch ex As Exception
+        '    DoStep2_Sinki(事業所, 得意先, 下店, 現場名, 備考, 日付連番, fl)
+        '    Exit Sub
+        'End Try
 
     End Sub
     'POPUP Window 取得
@@ -477,6 +675,8 @@ Public Class AutoImportNouhinsyo
     Public Function GetFrameByName(ByRef webApp As SHDocVw.InternetExplorerMedium, ByVal name As String) As mshtml.HTMLWindow2
         Dim Doc As mshtml.HTMLDocument = CType(webApp.Document, mshtml.HTMLDocument)
         Dim length As Integer = Doc.frames.length
+
+
         Dim frames As mshtml.FramesCollection = Doc.frames
         Dim i As Object
         For i = 0 To length - 1

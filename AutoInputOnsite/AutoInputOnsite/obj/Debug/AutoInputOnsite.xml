@@ -6,18 +6,7 @@ AutoInputOnsite
 </name>
 </assembly>
 <members>
-<member name="M:AutoInputOnsite.AutoImportNouhinsyo.Ninnsyou">
-	<summary>
- 認証情報
- </summary>
-	<remarks></remarks>
-</member><member name="M:AutoInputOnsite.AutoImportNouhinsyo.WaitComplete(SHDocVw.InternetExplorerMedium@)">
-	<summary>
- Wait For Complete
- </summary>
-	<param name="webApp"></param>
-	<remarks></remarks>
-</member><member name="M:AutoInputOnsite.AutoImportCsv.Ninnsyou">
+<member name="M:AutoInputOnsite.AutoImportCsv.Ninnsyou">
 	<summary>
  認証情報
  </summary>
@@ -41,6 +30,17 @@ AutoInputOnsite
 	<summary>
   ローカライズされた文字列などを検索するための、厳密に型指定されたリソース クラスです。
 </summary>
+</member><member name="M:AutoInputOnsite.AutoImportNouhinsyo.Ninnsyou">
+	<summary>
+ 認証情報
+ </summary>
+	<remarks></remarks>
+</member><member name="M:AutoInputOnsite.AutoImportNouhinsyo.WaitComplete(SHDocVw.InternetExplorerMedium@)">
+	<summary>
+ Wait For Complete
+ </summary>
+	<param name="webApp"></param>
+	<remarks></remarks>
 </member>
 </members>
 </doc>
