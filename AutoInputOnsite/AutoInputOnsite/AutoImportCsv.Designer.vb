@@ -32,7 +32,7 @@ Partial Class AutoImportCsv
         Me.btnRun.Name = "btnRun"
         Me.btnRun.Size = New System.Drawing.Size(75, 23)
         Me.btnRun.TabIndex = 0
-        Me.btnRun.Text = "発注自動"
+        Me.btnRun.Text = "自動"
         Me.btnRun.UseVisualStyleBackColor = True
         '
         'RichTextBox1
@@ -52,7 +52,7 @@ Partial Class AutoImportCsv
         Me.Controls.Add(Me.RichTextBox1)
         Me.Controls.Add(Me.btnRun)
         Me.Name = "AutoImportCsv"
-        Me.Text = "自動"
+        Me.Text = "見出＆明細作成"
         Me.ResumeLayout(False)
 
     End Sub

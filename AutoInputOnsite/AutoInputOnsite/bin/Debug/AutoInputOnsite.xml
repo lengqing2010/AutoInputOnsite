@@ -11,12 +11,6 @@ AutoInputOnsite
  認証情報
  </summary>
 	<remarks></remarks>
-</member><member name="M:AutoInputOnsite.AutoImportCsv.WaitComplete(SHDocVw.InternetExplorerMedium@)">
-	<summary>
- Wait For Complete
- </summary>
-	<param name="webApp"></param>
-	<remarks></remarks>
 </member><member name="P:AutoInputOnsite.My.Resources.Resources.ResourceManager">
 	<summary>
   このクラスで使用されているキャッシュされた ResourceManager インスタンスを返します。
@@ -35,7 +29,28 @@ AutoInputOnsite
  認証情報
  </summary>
 	<remarks></remarks>
-</member><member name="M:AutoInputOnsite.AutoImportNouhinsyo.WaitComplete(SHDocVw.InternetExplorerMedium@)">
+</member><member name="M:AutoInputOnsite.Menu.btnMs_Click(System.Object,System.EventArgs)">
+	<summary>
+ 見出＆明細作成
+ </summary>
+	<param name="sender"></param>
+	<param name="e"></param>
+	<remarks></remarks>
+</member><member name="M:AutoInputOnsite.Menu.btnNouhin_Click(System.Object,System.EventArgs)">
+	<summary>
+ 納期指定発注
+ </summary>
+	<param name="sender"></param>
+	<param name="e"></param>
+	<remarks></remarks>
+</member><member name="M:AutoInputOnsite.Menu.btnAll_Click(System.Object,System.EventArgs)">
+	<summary>
+ 見出＆明細作成  AND  納期指定発注
+ </summary>
+	<param name="sender"></param>
+	<param name="e"></param>
+	<remarks></remarks>
+</member><member name="M:AutoInputOnsite.Com.WaitComplete(SHDocVw.InternetExplorerMedium@)">
 	<summary>
  Wait For Complete
  </summary>

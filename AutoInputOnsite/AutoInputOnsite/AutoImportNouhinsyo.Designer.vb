@@ -32,7 +32,7 @@ Partial Class AutoImportNouhinsyo
         Me.btnRun.Name = "btnRun"
         Me.btnRun.Size = New System.Drawing.Size(75, 23)
         Me.btnRun.TabIndex = 0
-        Me.btnRun.Text = "発注自動"
+        Me.btnRun.Text = "自動"
         Me.btnRun.UseVisualStyleBackColor = True
         '
         'RichTextBox1
@@ -44,15 +44,15 @@ Partial Class AutoImportNouhinsyo
         Me.RichTextBox1.TabIndex = 1
         Me.RichTextBox1.Text = ""
         '
-        'AutoImportCsv
+        'AutoImportNouhinsyo
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1008, 562)
         Me.Controls.Add(Me.RichTextBox1)
         Me.Controls.Add(Me.btnRun)
-        Me.Name = "AutoImportCsv"
-        Me.Text = "自動"
+        Me.Name = "AutoImportNouhinsyo"
+        Me.Text = "納期指定発注"
         Me.ResumeLayout(False)
 
     End Sub
