@@ -128,6 +128,12 @@ Public Class AutoImportCsv
     Public Sub DoAll()
 
         Pub_Com = New Com("見出明細作成" & Now.ToString("yyyyMMddHHmmss"))
+        If Pub_Com.file_list_hattyuu.Count = 0 Then
+            ProBar = 100
+            Exit Sub
+        End If
+
+
 
         NinnsyouBackgroundWorker = New BackgroundWorker
         BackgroundWorker = New BackgroundWorker
@@ -252,17 +258,37 @@ Public Class AutoImportCsv
         Pub_Com.AddMsg("    備考：" & 備考)
         Pub_Com.AddMsg("    現場名：" & 現場名)
 
-        '見積見出入力
-        Pub_Com.GetElementBy(Ie, "fraMitBody", "input", "name", "strJgyCdText").innerText = 事業所
-        Pub_Com.GetElementBy(Ie, "fraMitBody", "input", "name", "strTokMeiText").innerText = 得意先
-        Pub_Com.GetElementBy(Ie, "fraMitBody", "input", "name", "strOtdMeiText").innerText = 下店
+        Pub_Com.SleepAndWaitComplete(Ie)
+        Dim fra As mshtml.HTMLWindow2 = Pub_Com.GetFrameWait(Ie, "fraMitBody")
 
-        Pub_Com.GetElementBy(Ie, "fraMitBody", "input", "name", "strBikouMei").innerText = 備考
-        Pub_Com.GetElementBy(Ie, "fraMitBody", "input", "name", "strGenbaMei").innerText = 現場名
+        Pub_Com.GetElement(fra, "input", "name", "strJgyCdText").innerText = 事業所
+        Pub_Com.GetElement(fra, "input", "name", "strTokMeiText").innerText = 得意先
+        Pub_Com.GetElement(fra, "input", "name", "strOtdMeiText").innerText = 下店
+        Pub_Com.GetElement(fra, "input", "name", "strBikouMei").innerText = 備考
+        Pub_Com.GetElement(fra, "input", "name", "strGenbaMei").innerText = 現場名
+        Pub_Com.GetElement(fra, "select", "name", "aryKijyunSyouhinBunrui").setAttribute("value", "A0001,サッシ,L90000")
 
-        Pub_Com.GetElementBy(Ie, "fraMitBody", "select", "name", "aryKijyunSyouhinBunrui").setAttribute("value", "A0001,サッシ,L90000")
         Pub_Com.AddMsg("    納材店なしで内訳入力へ CLICK")
-        Pub_Com.GetElementBy(Ie, "fraMitBody", "input", "name", "btnUtiwake").click()
+
+        Pub_Com.GetElement(fra, "input", "name", "btnUtiwake").click()
+
+
+
+
+
+        ''見積見出入力
+        'Pub_Com.GetElementBy(Ie, "fraMitBody", "input", "name", "strJgyCdText").innerText = 事業所
+        'Pub_Com.GetElementBy(Ie, "fraMitBody", "input", "name", "strTokMeiText").innerText = 得意先
+        'Pub_Com.GetElementBy(Ie, "fraMitBody", "input", "name", "strOtdMeiText").innerText = 下店
+
+        'Pub_Com.GetElementBy(Ie, "fraMitBody", "input", "name", "strBikouMei").innerText = 備考
+        'Pub_Com.GetElementBy(Ie, "fraMitBody", "input", "name", "strGenbaMei").innerText = 現場名
+
+        'Pub_Com.GetElementBy(Ie, "fraMitBody", "select", "name", "aryKijyunSyouhinBunrui").setAttribute("value", "A0001,サッシ,L90000")
+        'Pub_Com.AddMsg("    納材店なしで内訳入力へ CLICK")
+        'Pub_Com.GetElementBy(Ie, "fraMitBody", "input", "name", "btnUtiwake").click()
+
+
         System.Threading.Thread.Sleep(500)
         Pub_Com.WaitComplete(Ie)
 
@@ -289,15 +315,21 @@ Public Class AutoImportCsv
 
             Me.BackgroundWorker.RunWorkerAsync(folder_Hattyuu & fl)
             System.Threading.Thread.Sleep(500)
-
             'Dim csvPopup As SHDocVw.InternetExplorerMedium = GetPopupWindow("OnSite", "fileYomikomiSiji.asp")
 
             Pub_Com.AddMsg("    見積内訳入力 CSV取込 参　照 CLICK")
             Pub_Com.GetElementBy(GetPopupWindow("OnSite", "fileYomikomiSiji.asp"), "", "input", "value", "参　照").click()
-            System.Threading.Thread.Sleep(1500)
+
+            While Pub_Com.GetElementBy(GetPopupWindow("OnSite", "fileYomikomiSiji.asp"), "", "input", "name", "strFilename").getAttribute("value").ToString = ""
+                System.Threading.Thread.Sleep(1)
+            End While
+            System.Threading.Thread.Sleep(100)
+
+
             Pub_Com.AddMsg("    見積内訳入力 CSV取込 取　込 CLICK")
             Pub_Com.GetElementBy(GetPopupWindow("OnSite", "fileYomikomiSiji.asp"), "", "input", "value", "取　込").click()
-            System.Threading.Thread.Sleep(1500)
+            System.Threading.Thread.Sleep(1000)
+
 
             Pub_Com.WaitComplete(Ie)
             Pub_Com.AddMsg("    商品コード複数入力 次　へ CLICK")

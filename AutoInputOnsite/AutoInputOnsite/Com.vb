@@ -163,34 +163,29 @@ Public Class Com
 
     'Sleep App
     Sub SleepAndWaitComplete(ByRef webApp As SHDocVw.InternetExplorerMedium, Optional ByVal tmOut As Integer = 100)
-
         Try
             For i As Integer = 1 To tmOut
                 System.Threading.Thread.Sleep(1)
                 System.Windows.Forms.Application.DoEvents()
             Next
 
-            For i As Integer = 0 To 10
+            For i As Integer = 0 To 100
                 Do Until webApp.ReadyState = WebBrowserReadyState.Complete AndAlso Not webApp.Busy
                     System.Windows.Forms.Application.DoEvents()
-                    System.Threading.Thread.Sleep(10)
+                    System.Threading.Thread.Sleep(1)
                 Loop
-                System.Threading.Thread.Sleep(10)
+                System.Threading.Thread.Sleep(1)
             Next
         Catch ex As Exception
-
         End Try
-
     End Sub
 
     'Get element and do soming
     Public Function GetElementByDo(ByRef webApp As SHDocVw.InternetExplorerMedium, ByVal fraName As String, ByVal tagName As String, ByVal keyName As String, ByVal keyTxt As String) As mshtml.IHTMLElement
 
         SleepAndWaitComplete(webApp)
-
         Dim Doc As mshtml.HTMLDocument = CType(webApp.Document, mshtml.HTMLDocument)
         Dim eles As mshtml.IHTMLElementCollection
-
         If fraName = "" Then
             eles = Doc.getElementsByTagName(tagName)
         Else
@@ -202,7 +197,6 @@ Public Class Com
 
         For Each ele As mshtml.IHTMLElement In eles
             Try
-
                 If keyName = "innertext" Then
                     If ele.innerText = keyTxt Then
                         Return ele
@@ -214,12 +208,8 @@ Public Class Com
                 End If
 
             Catch ex As Exception
-
             End Try
-
         Next
-
-
         Return Nothing
 
     End Function
@@ -256,5 +246,30 @@ Public Class Com
 
     End Function
 
+
+    Public Function GetElement(ByVal fra As mshtml.HTMLWindow2, ByVal tagName As String, ByVal keyName As String, ByVal keyTxt As String) As mshtml.IHTMLElement
+
+        Dim eles As mshtml.IHTMLElementCollection
+        Dim Doc As mshtml.HTMLDocument
+        Doc = CType(fra.document, mshtml.HTMLDocument)
+        eles = Doc.getElementsByTagName(tagName)
+        For Each ele As mshtml.IHTMLElement In eles
+            Try
+                If keyName = "innertext" Then
+                    If ele.innerText = keyTxt Then
+                        Return ele
+                    End If
+                Else
+                    If ele.getAttribute(keyName).ToString = keyTxt Then
+                        Return ele
+                    End If
+                End If
+
+            Catch ex As Exception
+            End Try
+        Next
+        Return Nothing
+
+    End Function
 
 End Class

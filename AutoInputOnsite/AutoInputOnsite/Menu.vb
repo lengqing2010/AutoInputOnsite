@@ -48,7 +48,7 @@ Public Class Menu
         fra2.DoAll()
         fra2.Close()
         pb2.Value = 100
-
+        Me.TopMost = False
         MsgBox("Š®—¹")
         Me.TopMost = True
     End Sub
@@ -86,7 +86,7 @@ Public Class Menu
 
         pb1.Value = 100
         pb2.Value = 100
-
+        Me.TopMost = False
         MsgBox("Š®—¹")
         Me.TopMost = True
     End Sub
