@@ -33,6 +33,7 @@ Partial Class Menu
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
         Me.Label1 = New System.Windows.Forms.Label
         Me.Label2 = New System.Windows.Forms.Label
+        Me.cbInsatu = New System.Windows.Forms.CheckBox
         Me.SuspendLayout()
         '
         'btnMs
@@ -76,7 +77,7 @@ Partial Class Menu
         Me.cbHyouji.AutoSize = True
         Me.cbHyouji.Font = New System.Drawing.Font("HGP創英ﾌﾟﾚｾﾞﾝｽEB", 11.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(128, Byte))
         Me.cbHyouji.ForeColor = System.Drawing.Color.GhostWhite
-        Me.cbHyouji.Location = New System.Drawing.Point(510, 128)
+        Me.cbHyouji.Location = New System.Drawing.Point(23, 176)
         Me.cbHyouji.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.cbHyouji.Name = "cbHyouji"
         Me.cbHyouji.Size = New System.Drawing.Size(86, 19)
@@ -128,12 +129,28 @@ Partial Class Menu
         Me.Label2.TabIndex = 6
         Me.Label2.Text = "納期指定発注"
         '
+        'cbInsatu
+        '
+        Me.cbInsatu.AutoSize = True
+        Me.cbInsatu.Checked = True
+        Me.cbInsatu.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.cbInsatu.Font = New System.Drawing.Font("HGP創英ﾌﾟﾚｾﾞﾝｽEB", 11.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(128, Byte))
+        Me.cbInsatu.ForeColor = System.Drawing.Color.GhostWhite
+        Me.cbInsatu.Location = New System.Drawing.Point(135, 176)
+        Me.cbInsatu.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.cbInsatu.Name = "cbInsatu"
+        Me.cbInsatu.Size = New System.Drawing.Size(56, 19)
+        Me.cbInsatu.TabIndex = 7
+        Me.cbInsatu.Text = "印刷"
+        Me.cbInsatu.UseVisualStyleBackColor = True
+        '
         'Menu
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 15.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.InactiveCaptionText
-        Me.ClientSize = New System.Drawing.Size(609, 160)
+        Me.ClientSize = New System.Drawing.Size(609, 208)
+        Me.Controls.Add(Me.cbInsatu)
         Me.Controls.Add(Me.Label2)
         Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.pb2)
@@ -163,4 +180,5 @@ Partial Class Menu
     Friend WithEvents Timer1 As System.Windows.Forms.Timer
     Friend WithEvents Label1 As System.Windows.Forms.Label
     Friend WithEvents Label2 As System.Windows.Forms.Label
+    Friend WithEvents cbInsatu As System.Windows.Forms.CheckBox
 End Class

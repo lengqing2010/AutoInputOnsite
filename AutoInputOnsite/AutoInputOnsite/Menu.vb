@@ -17,10 +17,19 @@ Public Class Menu
         pb2.Value = 0
 
 
+
         fra = New AutoImportCsv
         If cbHyouji.Checked Then
             fra.Show()
         End If
+
+        'Dim thr1 As New Threading.Thread(AddressOf fra.DoAll)
+        'thr1.Start()
+        'While thr1.IsAlive
+        '    System.Threading.Thread.Sleep(1000)
+        'End While
+        'thr1.Abort()
+
         fra.DoAll()
         fra.Close()
         pb1.Value = 100
@@ -48,6 +57,9 @@ Public Class Menu
         If cbHyouji.Checked Then
             fra2.Show()
         End If
+
+        fra2.insatu = Me.cbInsatu.Checked
+
         fra2.DoAll()
         fra2.Close()
         pb2.Value = 100
@@ -89,6 +101,7 @@ Public Class Menu
         If cbHyouji.Checked Then
             fra2.Show()
         End If
+        fra2.insatu = Me.cbInsatu.Checked
         fra2.DoAll()
         fra2.Close()
         fra2.Dispose()

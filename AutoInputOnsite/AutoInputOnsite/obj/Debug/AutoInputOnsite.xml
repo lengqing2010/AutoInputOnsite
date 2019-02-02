@@ -6,7 +6,12 @@ AutoInputOnsite
 </name>
 </assembly>
 <members>
-<member name="P:AutoInputOnsite.My.Resources.Resources.ResourceManager">
+<member name="M:AutoInputOnsite.AutoImportCsv.Ninnsyou">
+	<summary>
+ 認証情報
+ </summary>
+	<remarks></remarks>
+</member><member name="P:AutoInputOnsite.My.Resources.Resources.ResourceManager">
 	<summary>
   このクラスで使用されているキャッシュされた ResourceManager インスタンスを返します。
 </summary>
@@ -19,6 +24,11 @@ AutoInputOnsite
 	<summary>
   ローカライズされた文字列などを検索するための、厳密に型指定されたリソース クラスです。
 </summary>
+</member><member name="M:AutoInputOnsite.AutoImportNouhinsyo.Ninnsyou">
+	<summary>
+ 認証情報
+ </summary>
+	<remarks></remarks>
 </member><member name="M:AutoInputOnsite.Menu.btnMs_Click(System.Object,System.EventArgs)">
 	<summary>
  見出＆明細作成
@@ -40,16 +50,10 @@ AutoInputOnsite
 	<param name="sender"></param>
 	<param name="e"></param>
 	<remarks></remarks>
-</member><member name="M:AutoInputOnsite.Com.Ninnsyou">
+</member><member name="M:AutoInputOnsite.Com.Ninnsyou(System.Int32)">
 	<summary>
  認証情報
  </summary>
-	<remarks></remarks>
-</member><member name="M:AutoInputOnsite.Com.WaitComplete(SHDocVw.InternetExplorerMedium@)">
-	<summary>
- Wait For Complete
- </summary>
-	<param name="webApp"></param>
 	<remarks></remarks>
 </member>
 </members>
