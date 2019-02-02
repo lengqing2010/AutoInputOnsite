@@ -144,24 +144,24 @@ Public Class AutoImportCsv
 
 
 
-    Public Sub Sleep5(ByVal Interval As Double)
-        'Dim __time As DateTime = DateTime.Now
-        'Dim __Span As Int64 = Interval * 10000
-        'While (DateTime.Now.Ticks - __time.Ticks < __Span)
-        '    Application.DoEvents()
-        'End While
-        'Timer1.Interval = Interval
-        'Timer1.Enabled = True
-        'Timer1.Start()
+    'Public Sub Com.Sleep5(ByVal Interval As Double)
+    '    'Dim __time As DateTime = DateTime.Now
+    '    'Dim __Span As Int64 = Interval * 10000
+    '    'While (DateTime.Now.Ticks - __time.Ticks < __Span)
+    '    '    Application.DoEvents()
+    '    'End While
+    '    'Timer1.Interval = Interval
+    '    'Timer1.Enabled = True
+    '    'Timer1.Start()
 
-        Dim Start As Long
-        Start = timeGetTime
-        Do While (timeGetTime < Start + CLng(Interval))
-            Windows.Forms.Application.DoEvents()
-            Sleep(1)
-        Loop
+    '    Dim Start As Long
+    '    Start = timeGetTime
+    '    Do While (timeGetTime < Start + CLng(Interval))
+    '        Windows.Forms.Application.DoEvents()
+    '        Sleep(1)
+    '    Loop
 
-    End Sub
+    'End Sub
     '実行
     Private Sub btnRun_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnRun.Click
         DoAll()
@@ -281,7 +281,7 @@ Public Class AutoImportCsv
         ''＊＊＊ 物販明細
         Pub_Com.GetElementBy(Ie, "Main", "input", "value", "物販明細").click()
         Pub_Com.SleepAndWaitComplete(Ie)
-        ' Sleep5(1500)
+        ' Com.Sleep5(1500)
         'Pub_Com.StopWK(NinnsyouBackgroundWorker)
 
         '新規見積もり
@@ -299,12 +299,12 @@ Public Class AutoImportCsv
 
         Dim cIe As SHDocVw.InternetExplorerMedium = GetPopupWindow("OnSite", "mitSearch.asp")
         While cIe Is Nothing
-            Sleep5(1000)
+            Com.Sleep5(1000)
             cIe = GetPopupWindow("OnSite", "mitSearch.asp")
         End While
 
         Pub_Com.GetElementBy(cIe, "", "input", "value", "新規見積").click()
-        Sleep5(100)
+        Com.Sleep5(100)
 
 
 
@@ -323,7 +323,7 @@ Public Class AutoImportCsv
 
         Dim folder_Hattyuu As String = ConfigurationManager.AppSettings("Folder_Hattyuu").ToString()
 
-        Sleep5(500)
+        Com.Sleep5(500)
         Pub_Com.SleepAndWaitComplete(Ie)
 
         Pub_Com.AddMsg("    事業所：" & 事業所)
@@ -363,7 +363,7 @@ Public Class AutoImportCsv
         'Pub_Com.GetElementBy(Ie, "fraMitBody", "input", "name", "btnUtiwake").click()
 
 
-        Sleep5(500)
+        Com.Sleep5(500)
         Pub_Com.SleepAndWaitComplete(Ie)
 
 
@@ -388,7 +388,7 @@ Public Class AutoImportCsv
 
 
         Me.BackgroundWorker.RunWorkerAsync(folder_Hattyuu & fl)
-        Sleep5(500)
+        Com.Sleep5(500)
         'Dim csvPopup As SHDocVw.InternetExplorerMedium = GetPopupWindow("OnSite", "fileYomikomiSiji.asp")
 
 
@@ -398,20 +398,20 @@ Public Class AutoImportCsv
         Dim fra1 As SHDocVw.InternetExplorerMedium = GetPopupWindow("OnSite", "fileYomikomiSiji.asp")
         Pub_Com.GetElementBy(fra1, "", "input", "value", "参　照").click()
 
-        Sleep5(1500)
+        Com.Sleep5(1500)
         Try
             While Pub_Com.GetElementBy(fra1, "", "input", "name", "strFilename").getAttribute("value").ToString = ""
-                Sleep5(1)
+                Com.Sleep5(1)
             End While
         Catch ex As Exception
         End Try
 
-        Sleep5(500)
+        Com.Sleep5(500)
         AddProBar(lv2) '3
 
         Pub_Com.AddMsg("    見積内訳入力 CSV取込 取　込 CLICK")
         Pub_Com.GetElementBy(GetPopupWindow("OnSite", "fileYomikomiSiji.asp"), "", "input", "value", "取　込").click()
-        Sleep5(1000)
+        Com.Sleep5(1000)
         AddProBar(lv2) '4
 
         Pub_Com.SleepAndWaitComplete(Ie)
@@ -481,7 +481,7 @@ Public Class AutoImportCsv
                     If CType(childIe.Document, mshtml.HTMLDocument).title = titleKey Then
                         If CType(childIe.Document, mshtml.HTMLDocument).url.Contains(fileNameKey) Then
                             Pub_Com.SleepAndWaitComplete(childIe)
-                            Sleep5(500)
+                            Com.Sleep5(500)
                             Return childIe
                         End If
                     End If

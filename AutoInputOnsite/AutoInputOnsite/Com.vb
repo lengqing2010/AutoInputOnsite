@@ -432,22 +432,13 @@ Public Class Com
 
     End Function
 
-    Public Sub Sleep5(ByVal Interval As Double)
-        'Dim __time As DateTime = DateTime.Now
-        'Dim __Span As Int64 = Interval * 10000
-        'While (DateTime.Now.Ticks - __time.Ticks < __Span)
-        '    Application.DoEvents()
-        'End While
-        'Timer1.Interval = Interval
-        'Timer1.Enabled = True
-        'Timer1.Start()
-
+    Public Shared Sub Sleep5(ByVal Interval As Double)
         Dim Start As Long
         Start = timeGetTime
         Do While (timeGetTime < Start + CLng(Interval))
             Windows.Forms.Application.DoEvents()
             Sleep(1)
         Loop
-
+        System.Threading.Thread.Sleep(50)
     End Sub
 End Class
