@@ -64,6 +64,7 @@
     <Compile Include="Menu.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="PARAM.vb" />
     <Compile Include="RawWebBrowser.vb">
       <SubType>Component</SubType>
     </Compile>

@@ -28,6 +28,9 @@ Public Class Menu
         Me.TopMost = False
         MsgBox("Š®—¹")
         Me.TopMost = True
+
+        fra.Dispose()
+        fra = Nothing
     End Sub
 
     ''' <summary>
@@ -51,6 +54,8 @@ Public Class Menu
         Me.TopMost = False
         MsgBox("Š®—¹")
         Me.TopMost = True
+        fra2.Dispose()
+        fra2 = Nothing
     End Sub
 
     ''' <summary>
@@ -73,6 +78,9 @@ Public Class Menu
         fra.DoAll()
         fra.Close()
 
+        fra.Dispose()
+        fra = Nothing
+
         pb1.Value = 100
 
         System.Threading.Thread.Sleep(500)
@@ -83,6 +91,8 @@ Public Class Menu
         End If
         fra2.DoAll()
         fra2.Close()
+        fra2.Dispose()
+        fra2 = Nothing
 
         pb1.Value = 100
         pb2.Value = 100

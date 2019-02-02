@@ -9,7 +9,27 @@ Imports System.Configuration
 
 Public Class AutoImportCsv
 
-    Public ProBar As Integer = 1
+    Public _ProBar As Double = 0
+    Public lv1 As Double
+    Public lv2 As Double
+    Public Property ProBar() As Integer
+        Get
+            If _ProBar < 100 Then
+                Return CInt(Int(_ProBar))
+            Else
+                Return 100
+            End If
+
+        End Get
+        Set(ByVal value As Integer)
+            _ProBar = value
+        End Set
+
+    End Property
+
+    Public Sub AddProBar(ByVal x As Double)
+        _ProBar += x
+    End Sub
 
 #Region "Windows DLL"
     <DllImport("user32.dll", CharSet:=CharSet.Auto, SetLastError:=True)> Public Shared Function FindWindow(ByVal lpClassName As String, ByVal lpWindowName As String) As IntPtr
@@ -67,48 +87,9 @@ Public Class AutoImportCsv
 
 
     Private Sub NinnsyouBackgroundWorker_DoWork(ByVal sender As Object, ByVal e As System.ComponentModel.DoWorkEventArgs) Handles NinnsyouBackgroundWorker.DoWork
-        Ninnsyou()
+        Pub_Com.Ninnsyou()
     End Sub
 
-    ''' <summary>
-    ''' 認証情報
-    ''' </summary>
-    ''' <remarks></remarks>
-    Private Sub Ninnsyou()
-        Dim user As String = ConfigurationManager.AppSettings("User").ToString()
-        Dim password As String = ConfigurationManager.AppSettings("Password").ToString()
-
-        If user = "" Then
-            user = "china\shil2"
-        End If
-        If password = "" Then
-            password = "asdf@123"
-        End If
-
-        Dim hWnd As IntPtr
-        Do While hWnd = IntPtr.Zero
-            hWnd = FindWindow("#32770", "windows セキュリティ")
-            Sleep(1)
-        Loop
-        Dim DirectUIHWND As IntPtr = FindWindowEx(hWnd, IntPtr.Zero, "DirectUIHWND", String.Empty)
-        Dim CtrlNotifySink1 As IntPtr = FindWindowEx(DirectUIHWND, IntPtr.Zero, "CtrlNotifySink", String.Empty)
-        Dim CtrlNotifySink2 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink1, "CtrlNotifySink", String.Empty)
-        Dim CtrlNotifySink3 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink2, "CtrlNotifySink", String.Empty)
-        Dim CtrlNotifySink4 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink3, "CtrlNotifySink", String.Empty)
-        Dim CtrlNotifySink5 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink4, "CtrlNotifySink", String.Empty)
-        Dim CtrlNotifySink6 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink5, "CtrlNotifySink", String.Empty)
-        Dim CtrlNotifySink7 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink6, "CtrlNotifySink", String.Empty)
-        Dim CtrlNotifySink8 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink7, "CtrlNotifySink", String.Empty)
-
-        Dim hEdit As IntPtr = FindWindowEx(CtrlNotifySink7, IntPtr.Zero, "Edit", String.Empty)
-        SendMessage(hEdit, WM.SETTEXT, 0, New StringBuilder(user))
-        Dim hEdit1 As IntPtr = FindWindowEx(CtrlNotifySink8, IntPtr.Zero, "Edit", String.Empty)
-        SendMessage(hEdit1, WM.SETTEXT, 0, New StringBuilder(password))
-        Dim hEdit2 As IntPtr = FindWindowEx(CtrlNotifySink3, IntPtr.Zero, "Button", "OK")
-        SendMessage(hEdit2, BM.CLICK, 0, Nothing)
-
-        Ninnsyou()
-    End Sub
 
 #End Region
 
@@ -116,8 +97,11 @@ Public Class AutoImportCsv
 
     Private WithEvents BackgroundWorker As BackgroundWorker
     Private WithEvents NinnsyouBackgroundWorker As BackgroundWorker
-    Public Ie As New SHDocVw.InternetExplorerMedium
+    Public Ie As SHDocVw.InternetExplorerMedium
     Public Pub_Com As Com
+
+
+
 
     '実行
     Private Sub btnRun_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnRun.Click
@@ -133,6 +117,9 @@ Public Class AutoImportCsv
             Exit Sub
         End If
 
+        lv1 = 90 / Pub_Com.file_list_hattyuu.Count
+        Ie = New SHDocVw.InternetExplorerMedium
+
 
 
         NinnsyouBackgroundWorker = New BackgroundWorker
@@ -141,21 +128,27 @@ Public Class AutoImportCsv
         Dim authHeader As Object = "Authorization: Basic " + _
         Convert.ToBase64String(System.Text.UnicodeEncoding.UTF8.GetBytes(String.Format("{0}:{1}", Pub_Com.user, Pub_Com.password))) + "\r\n"
 
+
+        Pub_Com.StartWK(NinnsyouBackgroundWorker)
         '＊＊＊ OnSiteパスワード入力画面
         Ie.Navigate(Pub_Com.url, , , , authHeader)
         Ie.Silent = True
         Ie.Visible = True
+        Pub_Com.StopWK(NinnsyouBackgroundWorker)
 
-        Me.NinnsyouBackgroundWorker.RunWorkerAsync()
-
-        '＊＊＊ログイン
-        DoStep1_Login()
+        'Me.NinnsyouBackgroundWorker.RunWorkerAsync()
 
 
-        Dim idx As Integer = 1
+        ProBar = 5
+        DoStep1_Login() '＊＊＊ログイン
+        ProBar = 10
+
+
+        'Dim idx As Integer = 1
 
         For Each fl As String In Pub_Com.file_list_hattyuu
 
+            lv2 = lv1 / 10
             Pub_Com.AddMsg("取込：" & fl)
 
             Dim 事業所, 得意先, 下店, 現場名, 備考, 日付連番 As String
@@ -167,31 +160,30 @@ Public Class AutoImportCsv
             備考 = fl.Split("-"c)(4)
             日付連番 = fl.Split("-"c)(5)
 
-            ProBar = CInt(20 + CInt(80 / Pub_Com.file_list_hattyuu.Count) * idx * 0.25 - 1)
 
             'While
             DoStep2_Sinki(事業所, 得意先, 下店, 現場名, 備考, 日付連番, fl)
 
 
-            ProBar = CInt(20 + CInt(80 / Pub_Com.file_list_hattyuu.Count) * idx * 0.75 - 1)
+            'ProBar = CInt(20 + CInt(80 / Pub_Com.file_list_hattyuu.Count) * idx * 0.75 - 1)
 
             Pub_Com.AddMsg("移動CSV：" & fl & "→" & Pub_Com.folder_Hattyuu_kanryou)
             If System.IO.File.Exists(Pub_Com.folder_Hattyuu_kanryou & fl) Then
-
                 FileSystem.Rename(Pub_Com.folder_Hattyuu_kanryou & fl, Pub_Com.folder_Hattyuu_kanryou & fl & ".bk." & Now.ToString("yyyyMMddHHmmss"))
             End If
             System.IO.File.Move(Pub_Com.folder_Hattyuu & fl, Pub_Com.folder_Hattyuu_kanryou & fl)
+            AddProBar(lv2) '10
 
-            ProBar = CInt(20 + CInt(80 / Pub_Com.file_list_hattyuu.Count) * idx * 1 - 1)
-
-            idx += 1
+            'idx += 1
 
         Next
 
         ProBar = 100
 
-        NinnsyouBackgroundWorker.Dispose()
+        ' NinnsyouBackgroundWorker.Dispose()
         BackgroundWorker.Dispose()
+        NinnsyouBackgroundWorker = Nothing
+        BackgroundWorker = Nothing
 
         Ie.Quit()
 
@@ -199,49 +191,61 @@ Public Class AutoImportCsv
 
     'Step 1 LOGIN IN
     Public Sub DoStep1_Login()
+        Pub_Com.StartWK(NinnsyouBackgroundWorker)
 
         Pub_Com.AddMsg("OnSiteパスワード入力")
         '＊＊＊ OnSiteパスワード入力
         Pub_Com.GetElementBy(Ie, "", "input", "name", "strPassWord").innerText = ConfigurationManager.AppSettings("OnSitePassword").ToString()
         Pub_Com.GetElementBy(Ie, "", "input", "value", "ログオン").click()
+        Pub_Com.StopWK(NinnsyouBackgroundWorker)
 
-        ProBar = 5
+
+        Pub_Com.StartWK(NinnsyouBackgroundWorker)
 
         Pub_Com.AddMsg("業務別総合メニュー")
         ''＊＊＊ 業務別総合メニュー
         Pub_Com.GetElementBy(Ie, "SubHeader", "a", "innertext", "[見積]").click()
         ' Pub_Com.WaitComplete(Ie)
+        Pub_Com.StopWK(NinnsyouBackgroundWorker)
 
-        ProBar = 10
+        Pub_Com.StartWK(NinnsyouBackgroundWorker)
+
         Pub_Com.AddMsg("物販明細")
         ''＊＊＊ 物販明細
         Pub_Com.GetElementBy(Ie, "Main", "input", "value", "物販明細").click()
         'Pub_Com.WaitComplete(Ie)
         ' System.Threading.Thread.Sleep(1500)
-
-        ProBar = 15
+        Pub_Com.StopWK(NinnsyouBackgroundWorker)
 
         '新規見積もり
         Pub_Com.AddMsg("新規見積")
         DoStep1_SinkiMitumori()
-
-        ProBar = 20
 
     End Sub
 
     'Step 1 新規見積もり
     Public Sub DoStep1_SinkiMitumori()
         Dim ShellWindows As New SHDocVw.ShellWindows
-        Try
-            Dim cIe As SHDocVw.InternetExplorerMedium = GetPopupWindow("OnSite", "mitSearch.asp")
-            Pub_Com.GetElementBy(cIe, "", "input", "value", "新規見積").click()
-            System.Threading.Thread.Sleep(100)
-            Pub_Com.WaitComplete(Ie)
-            Exit Sub
-        Catch ex As Exception
-            DoStep1_SinkiMitumori()
-            Exit Sub
-        End Try
+        'Try
+
+        'Pub_Com.StartWK(NinnsyouBackgroundWorker)
+
+        Dim cIe As SHDocVw.InternetExplorerMedium = GetPopupWindow("OnSite", "mitSearch.asp")
+        While cIe Is Nothing
+            System.Threading.Thread.Sleep(1000)
+            cIe = GetPopupWindow("OnSite", "mitSearch.asp")
+        End While
+
+        Pub_Com.GetElementBy(cIe, "", "input", "value", "新規見積").click()
+        System.Threading.Thread.Sleep(100)
+        Pub_Com.WaitComplete(Ie)
+        'Pub_Com.StopWK(NinnsyouBackgroundWorker)
+
+        Exit Sub
+        'Catch ex As Exception
+        '    DoStep1_SinkiMitumori()
+        '    Exit Sub
+        'End Try
     End Sub
 
     'Step 2 （WHILE）
@@ -272,7 +276,7 @@ Public Class AutoImportCsv
 
         Pub_Com.GetElement(fra, "input", "name", "btnUtiwake").click()
 
-
+        AddProBar(lv2) '1
 
 
 
@@ -295,8 +299,8 @@ Public Class AutoImportCsv
 
         '見積内訳入力
         Try
-            Dim ele As mshtml.IHTMLElement = Pub_Com.GetElementBy(Ie, "fraMitBody", "DIV", "classname", "ttl")
-            If ele.innerText <> "見積内訳入力" Then
+            Dim ele1 As mshtml.IHTMLElement = Pub_Com.GetElementBy(Ie, "fraMitBody", "DIV", "classname", "ttl")
+            If ele1.innerText <> "見積内訳入力" Then
                 DoStep2_Sinki(事業所, 得意先, 下店, 現場名, 備考, 日付連番, fl)
                 Exit Sub
             End If
@@ -306,73 +310,82 @@ Public Class AutoImportCsv
             DoStep2_Sinki(事業所, 得意先, 下店, 現場名, 備考, 日付連番, fl)
             Exit Sub
         End Try
-
+        AddProBar(lv2) '2
 
         Pub_Com.WaitComplete(Ie)
 
 
+
+
+        Me.BackgroundWorker.RunWorkerAsync(folder_Hattyuu & fl)
+        System.Threading.Thread.Sleep(500)
+        'Dim csvPopup As SHDocVw.InternetExplorerMedium = GetPopupWindow("OnSite", "fileYomikomiSiji.asp")
+
+
+
+        Pub_Com.AddMsg("    見積内訳入力 CSV取込 参　照 CLICK")
+
+        Dim fra1 As SHDocVw.InternetExplorerMedium = GetPopupWindow("OnSite", "fileYomikomiSiji.asp")
+        Pub_Com.GetElementBy(fra1, "", "input", "value", "参　照").click()
+
+        System.Threading.Thread.Sleep(1500)
         Try
-
-            Me.BackgroundWorker.RunWorkerAsync(folder_Hattyuu & fl)
-            System.Threading.Thread.Sleep(500)
-            'Dim csvPopup As SHDocVw.InternetExplorerMedium = GetPopupWindow("OnSite", "fileYomikomiSiji.asp")
-
-            Pub_Com.AddMsg("    見積内訳入力 CSV取込 参　照 CLICK")
-            Pub_Com.GetElementBy(GetPopupWindow("OnSite", "fileYomikomiSiji.asp"), "", "input", "value", "参　照").click()
-
-            While Pub_Com.GetElementBy(GetPopupWindow("OnSite", "fileYomikomiSiji.asp"), "", "input", "name", "strFilename").getAttribute("value").ToString = ""
+            While Pub_Com.GetElementBy(fra1, "", "input", "name", "strFilename").getAttribute("value").ToString = ""
                 System.Threading.Thread.Sleep(1)
             End While
-            System.Threading.Thread.Sleep(100)
-
-
-            Pub_Com.AddMsg("    見積内訳入力 CSV取込 取　込 CLICK")
-            Pub_Com.GetElementBy(GetPopupWindow("OnSite", "fileYomikomiSiji.asp"), "", "input", "value", "取　込").click()
-            System.Threading.Thread.Sleep(1000)
-
-
-            Pub_Com.WaitComplete(Ie)
-            Pub_Com.AddMsg("    商品コード複数入力 次　へ CLICK")
-            Pub_Com.GetElementBy(Ie, "fraMitBody", "input", "value", "次　へ").click()
-            Pub_Com.WaitComplete(Ie)
-            Pub_Com.AddMsg("    商品コード複数入力 次　へ CLICK")
-            Pub_Com.GetElementBy(Ie, "fraMitBody", "input", "value", "次　へ").click()
-            Pub_Com.WaitComplete(Ie)
-            Pub_Com.AddMsg("    商品コード複数入力 次　へ CLICK")
-            Pub_Com.GetElementBy(Ie, "fraMitBody", "input", "value", "次　へ").click()
-
-            Pub_Com.WaitComplete(Ie)
-            Pub_Com.WaitComplete(Ie)
-            Pub_Com.WaitComplete(Ie)
-
-            '寸法入力
-            Pub_Com.WaitComplete(Ie)
-            Pub_Com.AddMsg("    寸法入力 次　へ CLICK")
-            Pub_Com.GetElementBy(Ie, "fraMitBody", "input", "value", "次　へ").click()
-            Pub_Com.WaitComplete(Ie)
-            Pub_Com.WaitComplete(Ie)
-            Pub_Com.AddMsg("    寸法入力 次　へ CLICK")
-            Pub_Com.GetElementBy(Ie, "fraMitBody", "input", "value", "次　へ").click()
-            Pub_Com.WaitComplete(Ie)
-            Pub_Com.WaitComplete(Ie)
-            Pub_Com.AddMsg("    寸法入力 次　へ CLICK")
-            Pub_Com.GetElementBy(Ie, "fraMitBody", "input", "value", "次　へ").click()
-            Pub_Com.WaitComplete(Ie)
-            Pub_Com.WaitComplete(Ie)
-            Pub_Com.AddMsg("    単価入力 見積内訳入力へ CLICK")
-            Pub_Com.GetElementBy(Ie, "fraMitBody", "input", "value", "見積内訳入力へ").click()
-            Pub_Com.WaitComplete(Ie)
-            Dim ele As mshtml.IHTMLElement = Pub_Com.GetElementBy(Ie, "fraMitBody", "DIV", "classname", "ttl")
-            Dim kekka As String = ele.innerText
-            Pub_Com.AddMsg("    新規見積 CLICK")
-            Pub_Com.GetElementBy(Ie, "fraMitMenu", "a", "innertext", "[新規見積]").click()
-            Pub_Com.WaitComplete(Ie)
-            Pub_Com.WaitComplete(Ie)
-
         Catch ex As Exception
-            DoStep2_Sinki(事業所, 得意先, 下店, 現場名, 備考, 日付連番, fl)
-            Exit Sub
         End Try
+
+        System.Threading.Thread.Sleep(500)
+        AddProBar(lv2) '3
+
+        Pub_Com.AddMsg("    見積内訳入力 CSV取込 取　込 CLICK")
+        Pub_Com.GetElementBy(GetPopupWindow("OnSite", "fileYomikomiSiji.asp"), "", "input", "value", "取　込").click()
+        System.Threading.Thread.Sleep(1000)
+        AddProBar(lv2) '4
+
+        Pub_Com.WaitComplete(Ie)
+        Pub_Com.AddMsg("    商品コード複数入力 次　へ CLICK")
+        Pub_Com.GetElementBy(Ie, "fraMitBody", "input", "value", "次　へ").click()
+        Pub_Com.WaitComplete(Ie)
+        Pub_Com.AddMsg("    商品コード複数入力 次　へ CLICK")
+        Pub_Com.GetElementBy(Ie, "fraMitBody", "input", "value", "次　へ").click()
+        Pub_Com.WaitComplete(Ie)
+        Pub_Com.AddMsg("    商品コード複数入力 次　へ CLICK")
+        Pub_Com.GetElementBy(Ie, "fraMitBody", "input", "value", "次　へ").click()
+        AddProBar(lv2) '5
+        Pub_Com.WaitComplete(Ie)
+        Pub_Com.WaitComplete(Ie)
+        Pub_Com.WaitComplete(Ie)
+
+        '寸法入力
+        Pub_Com.WaitComplete(Ie)
+        Pub_Com.AddMsg("    寸法入力 次　へ CLICK")
+        Pub_Com.GetElementBy(Ie, "fraMitBody", "input", "value", "次　へ").click()
+        Pub_Com.WaitComplete(Ie)
+        Pub_Com.WaitComplete(Ie)
+        Pub_Com.AddMsg("    寸法入力 次　へ CLICK")
+        Pub_Com.GetElementBy(Ie, "fraMitBody", "input", "value", "次　へ").click()
+        Pub_Com.WaitComplete(Ie)
+        Pub_Com.WaitComplete(Ie)
+        Pub_Com.AddMsg("    寸法入力 次　へ CLICK")
+        Pub_Com.GetElementBy(Ie, "fraMitBody", "input", "value", "次　へ").click()
+        Pub_Com.WaitComplete(Ie)
+        Pub_Com.WaitComplete(Ie)
+        AddProBar(lv2) '6
+        Pub_Com.AddMsg("    単価入力 見積内訳入力へ CLICK")
+        Pub_Com.GetElementBy(Ie, "fraMitBody", "input", "value", "見積内訳入力へ").click()
+        Pub_Com.WaitComplete(Ie)
+        AddProBar(lv2) '7
+        Dim ele As mshtml.IHTMLElement = Pub_Com.GetElementBy(Ie, "fraMitBody", "DIV", "classname", "ttl")
+        Dim kekka As String = ele.innerText
+        AddProBar(lv2) '8
+        Pub_Com.AddMsg("    新規見積 CLICK")
+        Pub_Com.GetElementBy(Ie, "fraMitMenu", "a", "innertext", "[新規見積]").click()
+        Pub_Com.WaitComplete(Ie)
+        Pub_Com.WaitComplete(Ie)
+        AddProBar(lv2) '9
+
 
     End Sub
 

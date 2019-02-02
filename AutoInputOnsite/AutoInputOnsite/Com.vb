@@ -1,7 +1,42 @@
 Imports System.Configuration
 Imports System.Text
+Imports System.ComponentModel
+Imports System.Runtime.InteropServices
+Imports System.Threading.Thread
 
 Public Class Com
+
+#Region "Windows DLL"
+    <DllImport("user32.dll", CharSet:=CharSet.Auto, SetLastError:=True)> Public Shared Function FindWindow(ByVal lpClassName As String, ByVal lpWindowName As String) As IntPtr
+    End Function
+
+    <DllImport("user32.dll", CharSet:=CharSet.Auto, SetLastError:=True)> Private Shared Function FindWindowEx( _
+        ByVal parentHandle As IntPtr, _
+        ByVal childAfter As IntPtr, _
+        ByVal lclassName As String, _
+        ByVal windowTitle As String) As IntPtr
+    End Function
+
+    <DllImport("user32.dll", CharSet:=CharSet.Auto, SetLastError:=True)> Private Shared Function SendMessage( _
+        ByVal hWnd As IntPtr, _
+        ByVal Msg As Integer, _
+        ByVal wParam As Integer, _
+        ByVal lParam As StringBuilder) As Integer
+    End Function
+
+    <DllImport("user32.dll", CharSet:=CharSet.Auto, SetLastError:=True)> Private Shared Function IsWindowVisible( _
+        ByVal hWnd As IntPtr) As Boolean
+    End Function
+
+    Private Enum WM As Integer
+        SETTEXT = &HC
+    End Enum
+
+    Private Enum BM As Integer
+        CLICK = &HF5
+    End Enum
+
+#End Region
 
     Public folder_Hattyuu As String = ConfigurationManager.AppSettings("Folder_Hattyuu").ToString()
     Public folder_Hattyuu_kanryou As String = ConfigurationManager.AppSettings("Folder_Hattyuu_kanryou").ToString()
@@ -14,6 +49,66 @@ Public Class Com
     Public logFileName As String
     Public file_list_hattyuu As List(Of String)
     Public file_list_Nouki As List(Of String)
+
+    Sub StartWK(ByRef bw As BackgroundWorker)
+        If bw Is Nothing Then
+            bw = New BackgroundWorker
+        End If
+        bw.WorkerSupportsCancellation = True
+        bw.RunWorkerAsync()
+    End Sub
+
+    Sub StopWK(ByRef bw As BackgroundWorker)
+        bw.CancelAsync()
+        bw.Dispose()
+        bw = Nothing
+    End Sub
+
+
+
+    ''' <summary>
+    ''' 認証情報
+    ''' </summary>
+    ''' <remarks></remarks>
+    Public Sub Ninnsyou()
+
+        Dim user As String = ConfigurationManager.AppSettings("User").ToString()
+        Dim password As String = ConfigurationManager.AppSettings("Password").ToString()
+
+        If user = "" Then user = "china\shil2"
+        If password = "" Then password = "asdf@123"
+
+        Dim idx As Integer = 0
+
+        Dim hWnd As IntPtr
+        Do While hWnd = IntPtr.Zero
+            hWnd = FindWindow("#32770", "windows セキュリティ")
+            Sleep(10)
+            If idx = 500 Then
+                Exit Sub
+            Else
+                idx += 1
+            End If
+        Loop
+
+        Dim DirectUIHWND As IntPtr = FindWindowEx(hWnd, IntPtr.Zero, "DirectUIHWND", String.Empty)
+        Dim CtrlNotifySink1 As IntPtr = FindWindowEx(DirectUIHWND, IntPtr.Zero, "CtrlNotifySink", String.Empty)
+        Dim CtrlNotifySink2 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink1, "CtrlNotifySink", String.Empty)
+        Dim CtrlNotifySink3 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink2, "CtrlNotifySink", String.Empty)
+        Dim CtrlNotifySink4 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink3, "CtrlNotifySink", String.Empty)
+        Dim CtrlNotifySink5 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink4, "CtrlNotifySink", String.Empty)
+        Dim CtrlNotifySink6 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink5, "CtrlNotifySink", String.Empty)
+        Dim CtrlNotifySink7 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink6, "CtrlNotifySink", String.Empty)
+        Dim CtrlNotifySink8 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink7, "CtrlNotifySink", String.Empty)
+
+        Dim hEdit As IntPtr = FindWindowEx(CtrlNotifySink7, IntPtr.Zero, "Edit", String.Empty)
+        SendMessage(hEdit, WM.SETTEXT, 0, New StringBuilder(user))
+        Dim hEdit1 As IntPtr = FindWindowEx(CtrlNotifySink8, IntPtr.Zero, "Edit", String.Empty)
+        SendMessage(hEdit1, WM.SETTEXT, 0, New StringBuilder(password))
+        Dim hEdit2 As IntPtr = FindWindowEx(CtrlNotifySink3, IntPtr.Zero, "Button", "OK")
+        SendMessage(hEdit2, BM.CLICK, 0, Nothing)
+
+    End Sub
 
     Public Sub New(ByVal inLogFileName As String)
 
@@ -164,15 +259,16 @@ Public Class Com
     'Sleep App
     Sub SleepAndWaitComplete(ByRef webApp As SHDocVw.InternetExplorerMedium, Optional ByVal tmOut As Integer = 100)
         Try
-            For i As Integer = 1 To tmOut
-                System.Threading.Thread.Sleep(1)
-                System.Windows.Forms.Application.DoEvents()
-            Next
+            'For i As Integer = 1 To tmOut
+            '    System.Threading.Thread.Sleep(1)
+            '    System.Windows.Forms.Application.DoEvents()
+            'Next
 
             For i As Integer = 0 To 100
                 Do Until webApp.ReadyState = WebBrowserReadyState.Complete AndAlso Not webApp.Busy
                     System.Windows.Forms.Application.DoEvents()
                     System.Threading.Thread.Sleep(1)
+                    i = 0
                 Loop
                 System.Threading.Thread.Sleep(1)
             Next
@@ -183,6 +279,9 @@ Public Class Com
     'Get element and do soming
     Public Function GetElementByDo(ByRef webApp As SHDocVw.InternetExplorerMedium, ByVal fraName As String, ByVal tagName As String, ByVal keyName As String, ByVal keyTxt As String) As mshtml.IHTMLElement
 
+        If webApp Is Nothing Then
+            Return Nothing
+        End If
         SleepAndWaitComplete(webApp)
         Dim Doc As mshtml.HTMLDocument = CType(webApp.Document, mshtml.HTMLDocument)
         Dim eles As mshtml.IHTMLElementCollection
@@ -194,7 +293,7 @@ Public Class Com
             eles = Doc.getElementsByTagName(tagName)
         End If
 
-
+        SleepAndWaitComplete(webApp)
         For Each ele As mshtml.IHTMLElement In eles
             Try
                 If keyName = "innertext" Then
@@ -271,5 +370,6 @@ Public Class Com
         Return Nothing
 
     End Function
+
 
 End Class
