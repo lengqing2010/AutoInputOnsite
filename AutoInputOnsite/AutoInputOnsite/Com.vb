@@ -280,6 +280,7 @@ Public Class Com
         Sleep5(100)
 
         For i As Integer = 0 To 10
+
             Do Until webApp.ReadyState = WebBrowserReadyState.Complete AndAlso Not webApp.Busy
                 System.Windows.Forms.Application.DoEvents()
                 Sleep5(tmOut / 10)
