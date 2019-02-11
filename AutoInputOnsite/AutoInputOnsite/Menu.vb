@@ -1,7 +1,16 @@
+Imports System.ComponentModel
+Imports System.Runtime.InteropServices
+Imports System.Text
+Imports System.Threading.Thread
+Imports System.Configuration
+
 Public Class Menu
 
     Public fra As AutoImportCsv
     Public fra2 As AutoImportNouhinsyo
+
+
+    Private WithEvents BackgroundWorker As BackgroundWorker
 
     ''' <summary>
     ''' å©èoÅïñæç◊çÏê¨
@@ -10,6 +19,12 @@ Public Class Menu
     ''' <param name="e"></param>
     ''' <remarks></remarks>
     Private Sub btnMs_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnMs.Click
+
+        If BackgroundWorker IsNot Nothing Then BackgroundWorker.Dispose()
+        BackgroundWorker = New BackgroundWorker
+        BackgroundWorker.RunWorkerAsync()
+
+
         Timer1.Stop()
         Timer1.Start()
 
@@ -49,6 +64,11 @@ Public Class Menu
     ''' <param name="e"></param>
     ''' <remarks></remarks>
     Private Sub btnNouhin_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnNouhin.Click
+
+        If BackgroundWorker IsNot Nothing Then BackgroundWorker.Dispose()
+        BackgroundWorker = New BackgroundWorker
+        BackgroundWorker.RunWorkerAsync()
+
         Timer1.Stop()
         Timer1.Start()
         pb1.Value = 0
@@ -77,6 +97,11 @@ Public Class Menu
     ''' <param name="e"></param>
     ''' <remarks></remarks>
     Private Sub btnAll_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnAll.Click
+
+        If BackgroundWorker IsNot Nothing Then BackgroundWorker.Dispose()
+        BackgroundWorker = New BackgroundWorker
+        BackgroundWorker.RunWorkerAsync()
+
         Timer1.Stop()
         Timer1.Start()
         pb1.Value = 0
@@ -122,4 +147,22 @@ Public Class Menu
             pb2.Value = fra2.ProBar
         End If
     End Sub
+
+    Private Sub Menu_Disposed(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Disposed
+
+    End Sub
+
+    Private Sub Menu_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+
+    End Sub
+
+
+    Private Sub BackgroundWorker_DoWork(ByVal sender As Object, ByVal e As System.ComponentModel.DoWorkEventArgs) Handles BackgroundWorker.DoWork
+        Dim com As New Com("")
+
+        com.NewWindowsCom()
+    End Sub
+
+
+
 End Class

@@ -95,48 +95,48 @@ Public Class AutoImportCsv
     ''' 認証情報
     ''' </summary>
     ''' <remarks></remarks>
-    Public Sub Ninnsyou()
+    'Public Sub Ninnsyou()
 
-        Dim user As String = ConfigurationManager.AppSettings("User").ToString()
-        Dim password As String = ConfigurationManager.AppSettings("Password").ToString()
+    '    Dim user As String = ConfigurationManager.AppSettings("User").ToString()
+    '    Dim password As String = ConfigurationManager.AppSettings("Password").ToString()
 
-        If user = "" Then user = "china\shil2"
-        If password = "" Then password = "asdf@123"
+    '    If user = "" Then user = "china\shil2"
+    '    If password = "" Then password = "asdf@123"
 
-        Dim idx As Integer = 0
+    '    Dim idx As Integer = 0
 
-        Dim hWnd As IntPtr
-        Do While hWnd = IntPtr.Zero
-            hWnd = FindWindow("#32770", "windows セキュリティ")
-            Sleep(10)
-        Loop
+    '    Dim hWnd As IntPtr
+    '    Do While hWnd = IntPtr.Zero
+    '        hWnd = FindWindow("#32770", "windows セキュリティ")
+    '        Sleep(10)
+    '    Loop
 
-        Dim DirectUIHWND As IntPtr = FindWindowEx(hWnd, IntPtr.Zero, "DirectUIHWND", String.Empty)
-        Dim CtrlNotifySink1 As IntPtr = FindWindowEx(DirectUIHWND, IntPtr.Zero, "CtrlNotifySink", String.Empty)
-        Dim CtrlNotifySink2 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink1, "CtrlNotifySink", String.Empty)
-        Dim CtrlNotifySink3 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink2, "CtrlNotifySink", String.Empty)
-        Dim CtrlNotifySink4 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink3, "CtrlNotifySink", String.Empty)
-        Dim CtrlNotifySink5 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink4, "CtrlNotifySink", String.Empty)
-        Dim CtrlNotifySink6 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink5, "CtrlNotifySink", String.Empty)
-        Dim CtrlNotifySink7 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink6, "CtrlNotifySink", String.Empty)
-        Dim CtrlNotifySink8 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink7, "CtrlNotifySink", String.Empty)
+    '    Dim DirectUIHWND As IntPtr = FindWindowEx(hWnd, IntPtr.Zero, "DirectUIHWND", String.Empty)
+    '    Dim CtrlNotifySink1 As IntPtr = FindWindowEx(DirectUIHWND, IntPtr.Zero, "CtrlNotifySink", String.Empty)
+    '    Dim CtrlNotifySink2 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink1, "CtrlNotifySink", String.Empty)
+    '    Dim CtrlNotifySink3 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink2, "CtrlNotifySink", String.Empty)
+    '    Dim CtrlNotifySink4 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink3, "CtrlNotifySink", String.Empty)
+    '    Dim CtrlNotifySink5 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink4, "CtrlNotifySink", String.Empty)
+    '    Dim CtrlNotifySink6 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink5, "CtrlNotifySink", String.Empty)
+    '    Dim CtrlNotifySink7 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink6, "CtrlNotifySink", String.Empty)
+    '    Dim CtrlNotifySink8 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink7, "CtrlNotifySink", String.Empty)
 
-        Dim hEdit As IntPtr = FindWindowEx(CtrlNotifySink7, IntPtr.Zero, "Edit", String.Empty)
-        SendMessage(hEdit, WM.SETTEXT, 0, New StringBuilder(user))
-        Dim hEdit1 As IntPtr = FindWindowEx(CtrlNotifySink8, IntPtr.Zero, "Edit", String.Empty)
-        SendMessage(hEdit1, WM.SETTEXT, 0, New StringBuilder(password))
-        Dim hEdit2 As IntPtr = FindWindowEx(CtrlNotifySink3, IntPtr.Zero, "Button", "OK")
-        SendMessage(hEdit2, BM.CLICK, 0, Nothing)
+    '    Dim hEdit As IntPtr = FindWindowEx(CtrlNotifySink7, IntPtr.Zero, "Edit", String.Empty)
+    '    SendMessage(hEdit, WM.SETTEXT, 0, New StringBuilder(user))
+    '    Dim hEdit1 As IntPtr = FindWindowEx(CtrlNotifySink8, IntPtr.Zero, "Edit", String.Empty)
+    '    SendMessage(hEdit1, WM.SETTEXT, 0, New StringBuilder(password))
+    '    Dim hEdit2 As IntPtr = FindWindowEx(CtrlNotifySink3, IntPtr.Zero, "Button", "OK")
+    '    SendMessage(hEdit2, BM.CLICK, 0, Nothing)
 
-        Ninnsyou()
+    '    Ninnsyou()
 
-    End Sub
+    'End Sub
 
 #End Region
 
 #Region "自動実行"
 
-    Private WithEvents BackgroundWorker As BackgroundWorker
+    ' Private WithEvents BackgroundWorker As BackgroundWorker
 
     Public Ie As SHDocVw.InternetExplorerMedium
     Public Pub_Com As Com
@@ -180,14 +180,14 @@ Public Class AutoImportCsv
         Ie = New SHDocVw.InternetExplorerMedium
 
         'NinnsyouBackgroundWorker = New BackgroundWorker
-        BackgroundWorker = New BackgroundWorker
+        ' BackgroundWorker = New BackgroundWorker
 
         Dim authHeader As Object = "Authorization: Basic " + _
         Convert.ToBase64String(System.Text.UnicodeEncoding.UTF8.GetBytes(String.Format("{0}:{1}", Pub_Com.user, Pub_Com.password))) + "\r\n"
 
 
-        Dim thr As New Threading.Thread(AddressOf Ninnsyou)
-        thr.Start()
+        'Dim thr As New Threading.Thread(AddressOf Ninnsyou)
+        'thr.Start()
 
         'Pub_Com.StartWK(NinnsyouBackgroundWorker)
         '＊＊＊ OnSiteパスワード入力画面
@@ -241,14 +241,14 @@ Public Class AutoImportCsv
 
         Next
 
-        thr.Abort()
+        'thr.Abort()
 
         ProBar = 100
 
         ' NinnsyouBackgroundWorker.Dispose()
-        BackgroundWorker.Dispose()
+        ' BackgroundWorker.Dispose()
         ' NinnsyouBackgroundWorker = Nothing
-        BackgroundWorker = Nothing
+        ' BackgroundWorker = Nothing
 
         Ie.Quit()
 
@@ -387,7 +387,7 @@ Public Class AutoImportCsv
 
 
 
-        Me.BackgroundWorker.RunWorkerAsync(folder_Hattyuu & fl)
+        'Me.BackgroundWorker.RunWorkerAsync(folder_Hattyuu & fl)
         Com.Sleep5(500)
         'Dim csvPopup As SHDocVw.InternetExplorerMedium = GetPopupWindow("OnSite", "fileYomikomiSiji.asp")
 
@@ -491,24 +491,24 @@ Public Class AutoImportCsv
         Return Nothing
     End Function
 
-    'ファイル選択
-    Private Sub BackgroundWorker_DoWork(ByVal sender As Object, ByVal e As System.ComponentModel.DoWorkEventArgs) Handles BackgroundWorker.DoWork
-        Dim FileName As String = DirectCast(e.Argument, String)
-        Dim hWnd As IntPtr
-        Do While hWnd = IntPtr.Zero
-            hWnd = FindWindow("#32770", "アップロードするファイルの選択")
-            Sleep(1)
-        Loop
-        Dim hComboBoxEx As IntPtr = FindWindowEx(hWnd, IntPtr.Zero, "ComboBoxEx32", String.Empty)
-        Dim hComboBox As IntPtr = FindWindowEx(hComboBoxEx, IntPtr.Zero, "ComboBox", String.Empty)
-        Dim hEdit As IntPtr = FindWindowEx(hComboBox, IntPtr.Zero, "Edit", String.Empty)
-        Do Until IsWindowVisible(hEdit)
-            Sleep(1)
-        Loop
-        SendMessage(hEdit, WM.SETTEXT, 0, New StringBuilder(FileName))
-        Dim hButton As IntPtr = FindWindowEx(hWnd, IntPtr.Zero, "Button", "開く(&O)")
-        SendMessage(hButton, BM.CLICK, 0, Nothing)
-    End Sub
+    ''ファイル選択
+    'Private Sub BackgroundWorker_DoWork(ByVal sender As Object, ByVal e As System.ComponentModel.DoWorkEventArgs) Handles BackgroundWorker.DoWork
+    '    Dim FileName As String = DirectCast(e.Argument, String)
+    '    Dim hWnd As IntPtr
+    '    Do While hWnd = IntPtr.Zero
+    '        hWnd = FindWindow("#32770", "アップロードするファイルの選択")
+    '        Sleep(1)
+    '    Loop
+    '    Dim hComboBoxEx As IntPtr = FindWindowEx(hWnd, IntPtr.Zero, "ComboBoxEx32", String.Empty)
+    '    Dim hComboBox As IntPtr = FindWindowEx(hComboBoxEx, IntPtr.Zero, "ComboBox", String.Empty)
+    '    Dim hEdit As IntPtr = FindWindowEx(hComboBox, IntPtr.Zero, "Edit", String.Empty)
+    '    Do Until IsWindowVisible(hEdit)
+    '        Sleep(1)
+    '    Loop
+    '    SendMessage(hEdit, WM.SETTEXT, 0, New StringBuilder(FileName))
+    '    Dim hButton As IntPtr = FindWindowEx(hWnd, IntPtr.Zero, "Button", "開く(&O)")
+    '    SendMessage(hButton, BM.CLICK, 0, Nothing)
+    'End Sub
 
 #End Region
 

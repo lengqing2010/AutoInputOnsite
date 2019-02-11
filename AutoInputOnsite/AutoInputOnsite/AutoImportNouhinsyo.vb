@@ -9,6 +9,10 @@ Imports System.Configuration
 
 Public Class AutoImportNouhinsyo
 
+
+
+
+
     Public _ProBar As Decimal = 0
     Public lv1 As Decimal
     Public lv2 As Decimal
@@ -138,42 +142,42 @@ Public Class AutoImportNouhinsyo
     ''' 認証情報
     ''' </summary>
     ''' <remarks></remarks>
-    Public Sub Ninnsyou()
+    'Public Sub Ninnsyou()
 
-        Dim user As String = ConfigurationManager.AppSettings("User").ToString()
-        Dim password As String = ConfigurationManager.AppSettings("Password").ToString()
+    '    Dim user As String = ConfigurationManager.AppSettings("User").ToString()
+    '    Dim password As String = ConfigurationManager.AppSettings("Password").ToString()
 
-        If user = "" Then user = "china\shil2"
-        If password = "" Then password = "asdf@123"
+    '    If user = "" Then user = "china\shil2"
+    '    If password = "" Then password = "asdf@123"
 
-        Dim idx As Integer = 0
+    '    Dim idx As Integer = 0
 
-        Dim hWnd As IntPtr
-        Do While hWnd = IntPtr.Zero
-            hWnd = FindWindow("#32770", "windows セキュリティ")
-            Sleep(10)
-        Loop
+    '    Dim hWnd As IntPtr
+    '    Do While hWnd = IntPtr.Zero
+    '        hWnd = FindWindow("#32770", "windows セキュリティ")
+    '        Sleep(10)
+    '    Loop
 
-        Dim DirectUIHWND As IntPtr = FindWindowEx(hWnd, IntPtr.Zero, "DirectUIHWND", String.Empty)
-        Dim CtrlNotifySink1 As IntPtr = FindWindowEx(DirectUIHWND, IntPtr.Zero, "CtrlNotifySink", String.Empty)
-        Dim CtrlNotifySink2 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink1, "CtrlNotifySink", String.Empty)
-        Dim CtrlNotifySink3 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink2, "CtrlNotifySink", String.Empty)
-        Dim CtrlNotifySink4 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink3, "CtrlNotifySink", String.Empty)
-        Dim CtrlNotifySink5 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink4, "CtrlNotifySink", String.Empty)
-        Dim CtrlNotifySink6 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink5, "CtrlNotifySink", String.Empty)
-        Dim CtrlNotifySink7 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink6, "CtrlNotifySink", String.Empty)
-        Dim CtrlNotifySink8 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink7, "CtrlNotifySink", String.Empty)
+    '    Dim DirectUIHWND As IntPtr = FindWindowEx(hWnd, IntPtr.Zero, "DirectUIHWND", String.Empty)
+    '    Dim CtrlNotifySink1 As IntPtr = FindWindowEx(DirectUIHWND, IntPtr.Zero, "CtrlNotifySink", String.Empty)
+    '    Dim CtrlNotifySink2 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink1, "CtrlNotifySink", String.Empty)
+    '    Dim CtrlNotifySink3 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink2, "CtrlNotifySink", String.Empty)
+    '    Dim CtrlNotifySink4 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink3, "CtrlNotifySink", String.Empty)
+    '    Dim CtrlNotifySink5 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink4, "CtrlNotifySink", String.Empty)
+    '    Dim CtrlNotifySink6 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink5, "CtrlNotifySink", String.Empty)
+    '    Dim CtrlNotifySink7 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink6, "CtrlNotifySink", String.Empty)
+    '    Dim CtrlNotifySink8 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink7, "CtrlNotifySink", String.Empty)
 
-        Dim hEdit As IntPtr = FindWindowEx(CtrlNotifySink7, IntPtr.Zero, "Edit", String.Empty)
-        SendMessage(hEdit, WM.SETTEXT, 0, New StringBuilder(user))
-        Dim hEdit1 As IntPtr = FindWindowEx(CtrlNotifySink8, IntPtr.Zero, "Edit", String.Empty)
-        SendMessage(hEdit1, WM.SETTEXT, 0, New StringBuilder(password))
-        Dim hEdit2 As IntPtr = FindWindowEx(CtrlNotifySink3, IntPtr.Zero, "Button", "OK")
-        SendMessage(hEdit2, BM.CLICK, 0, Nothing)
+    '    Dim hEdit As IntPtr = FindWindowEx(CtrlNotifySink7, IntPtr.Zero, "Edit", String.Empty)
+    '    SendMessage(hEdit, WM.SETTEXT, 0, New StringBuilder(user))
+    '    Dim hEdit1 As IntPtr = FindWindowEx(CtrlNotifySink8, IntPtr.Zero, "Edit", String.Empty)
+    '    SendMessage(hEdit1, WM.SETTEXT, 0, New StringBuilder(password))
+    '    Dim hEdit2 As IntPtr = FindWindowEx(CtrlNotifySink3, IntPtr.Zero, "Button", "OK")
+    '    SendMessage(hEdit2, BM.CLICK, 0, Nothing)
 
-        Ninnsyou()
+    '    Ninnsyou()
 
-    End Sub
+    'End Sub
 
 
 
@@ -184,7 +188,7 @@ Public Class AutoImportNouhinsyo
     ' Private WithEvents BackgroundWorker As BackgroundWorker
     ' Private WithEvents NinnsyouBackgroundWorker As BackgroundWorker
 
-    Private WithEvents PDFBackgroundWorker As BackgroundWorker
+    'Private WithEvents PDFBackgroundWorker As BackgroundWorker
     'Private WithEvents PDFMessageBackgroundWorker As BackgroundWorker
 
 
@@ -228,14 +232,14 @@ Public Class AutoImportNouhinsyo
         Ie.Visible = True
 
         '認証
-        Dim thr As New Threading.Thread(AddressOf Ninnsyou)
-        thr.Start()
+        'Dim thr As New Threading.Thread(AddressOf Ninnsyou)
+        'thr.Start()
         ProBar = 5
         '＊＊＊ログイン
         DoStep1_Login()
 
 
-        thr.Abort()
+        'thr.Abort()
         ProBar = 10
         '  Pub_Com.StopWK(NinnsyouBackgroundWorker)
 
@@ -267,14 +271,14 @@ Public Class AutoImportNouhinsyo
 
             Pub_Com.AddMsg("取込：" & Pub_Com.file_list_Nouki(zzz).ToString.Trim)
 
-            Dim thr2 As New Threading.Thread(AddressOf Ninnsyou)
-            thr2.Start()
+            'Dim thr2 As New Threading.Thread(AddressOf Ninnsyou)
+            'thr2.Start()
             '見積検索
             Pub_Com.AddMsg("見積検索")
             DoStep1_PoupuSentaku(事業所, 得意先, 下店, 現場名, 備考, 日付連番, csvFileName)
             Pub_Com.SleepAndWaitComplete(Ie)
             AddProBar(lv2) '2
-            thr2.Abort()
+            'thr2.Abort()
 
             '納期日設定
             If Not DoStep2_Set() Then
@@ -426,9 +430,9 @@ Public Class AutoImportNouhinsyo
 
                 'Pub_Com.SleepAndWaitComplete(Ie)
                 'Pub_Com.SleepAndWaitComplete(Ie)
-                System.Threading.Thread.Sleep(9000)
-                'Com.Sleep5(9000)
-                DownLoadPdf(csvFileName)
+                'System.Threading.Thread.Sleep(5000)
+                Com.Sleep5(10000)
+                'DownLoadPdf(csvFileName)
                 'CheckForIllegalCrossThreadCalls = True
                 'Gsz_Thread_Test = New Threading.Thread(AddressOf DownLoadPdf)
                 'Gsz_Thread_Test.Start(csvFileName)
@@ -436,6 +440,7 @@ Public Class AutoImportNouhinsyo
                 'While Gsz_Thread_Test.IsAlive
                 '    Com.Sleep5(1000)
                 'End While
+
             End If
 
 
@@ -485,86 +490,86 @@ Public Class AutoImportNouhinsyo
     '    Invoke(ivo, csvFileName.ToString)
     'End Sub
 
-    Public Sub DownLoadPdf(ByVal csvFileName As Object)
+    '    Public Sub DownLoadPdf(ByVal csvFileName As Object)
 
 
-        Dim cie As SHDocVw.InternetExplorerMedium = GetPopupWindowPDF()
-        'Pub_Com.SleepAndWaitComplete(cie)
-        'Pub_Com.SleepAndWaitComplete(cie)
-        Com.Sleep5(1000)
-        Dim waitT As Integer = 2000
-reD:
-        If Not ClosePdrErr() Then
-            Try
-                ClosePdrErr()
-                Com.Sleep5(500)
-                cie.Refresh()
-                Com.Sleep5(1000)
-                Dim hWnd2 As IntPtr
-                hWnd2 = FindWindow("#32770", "Windows Internet Explorer")
+    '        Dim cie As SHDocVw.InternetExplorerMedium = GetPopupWindowPDF()
+    '        'Pub_Com.SleepAndWaitComplete(cie)
+    '        'Pub_Com.SleepAndWaitComplete(cie)
+    '        Com.Sleep5(1000)
+    '        Dim waitT As Integer = 2000
+    'reD:
+    '        If Not ClosePdrErr() Then
+    '            Try
+    '                ClosePdrErr()
+    '                Com.Sleep5(500)
+    '                cie.Refresh()
+    '                Com.Sleep5(1000)
+    '                Dim hWnd2 As IntPtr
+    '                hWnd2 = FindWindow("#32770", "Windows Internet Explorer")
 
-                Dim hButton As IntPtr = FindWindowEx(hWnd2, IntPtr.Zero, "Button", "再試行(&R)")
-                SendMessage(hButton, BM.CLICK, 0, Nothing)
-                Com.Sleep5(waitT)
-                waitT = waitT + 1000
-            Catch ex As Exception
+    '                Dim hButton As IntPtr = FindWindowEx(hWnd2, IntPtr.Zero, "Button", "再試行(&R)")
+    '                SendMessage(hButton, BM.CLICK, 0, Nothing)
+    '                Com.Sleep5(waitT)
+    '                waitT = waitT + 1000
+    '            Catch ex As Exception
 
-            End Try
-
-
-        End If
-
-        If Not ClosePdrErr() Then
-            ClosePdrErr()
-            Com.Sleep5(500)
-            cie.Refresh()
-            Com.Sleep5(1000)
-            Dim hWnd2 As IntPtr
-            hWnd2 = FindWindow("#32770", "Windows Internet Explorer")
-
-            Dim hButton As IntPtr = FindWindowEx(hWnd2, IntPtr.Zero, "Button", "再試行(&R)")
-            SendMessage(hButton, BM.CLICK, 0, Nothing)
-            Com.Sleep5(waitT)
-            waitT = waitT + 1000
-
-        End If
+    '            End Try
 
 
-        Pub_Com.SleepAndWaitComplete(cie)
-        Pub_Com.SleepAndWaitComplete(cie)
-        Pub_Com.SleepAndWaitComplete(cie)
+    '        End If
+
+    '        If Not ClosePdrErr() Then
+    '            ClosePdrErr()
+    '            Com.Sleep5(500)
+    '            cie.Refresh()
+    '            Com.Sleep5(1000)
+    '            Dim hWnd2 As IntPtr
+    '            hWnd2 = FindWindow("#32770", "Windows Internet Explorer")
+
+    '            Dim hButton As IntPtr = FindWindowEx(hWnd2, IntPtr.Zero, "Button", "再試行(&R)")
+    '            SendMessage(hButton, BM.CLICK, 0, Nothing)
+    '            Com.Sleep5(waitT)
+    '            waitT = waitT + 1000
+
+    '        End If
 
 
-        CType(cie, SHDocVw.InternetExplorerMedium).ExecWB(SHDocVw.OLECMDID.OLECMDID_SAVEAS, SHDocVw.OLECMDEXECOPT.OLECMDEXECOPT_PROMPTUSER)
-        Com.Sleep5(500)
-        Dim hWnd As IntPtr
-        hWnd = FindWindow("#32770", "コピーを保存")
-        If hWnd = IntPtr.Zero Then
-            ClosePdrErr()
-            Com.Sleep5(500)
-            cie.Refresh()
-            Com.Sleep5(1000)
-            Dim hWnd2 As IntPtr
-            hWnd2 = FindWindow("#32770", "Windows Internet Explorer")
+    '        Pub_Com.SleepAndWaitComplete(cie)
+    '        Pub_Com.SleepAndWaitComplete(cie)
+    '        Pub_Com.SleepAndWaitComplete(cie)
 
-            Dim hButton As IntPtr = FindWindowEx(hWnd2, IntPtr.Zero, "Button", "再試行(&R)")
-            SendMessage(hButton, BM.CLICK, 0, Nothing)
-            Com.Sleep5(waitT)
-            waitT = waitT + 1000
-            GoTo reD
-            Pub_Com.SleepAndWaitComplete(cie)
-            Pub_Com.SleepAndWaitComplete(cie)
-            Pub_Com.SleepAndWaitComplete(cie)
 
-        End If
+    '        CType(cie, SHDocVw.InternetExplorerMedium).ExecWB(SHDocVw.OLECMDID.OLECMDID_SAVEAS, SHDocVw.OLECMDEXECOPT.OLECMDEXECOPT_PROMPTUSER)
+    '        Com.Sleep5(500)
+    '        Dim hWnd As IntPtr
+    '        hWnd = FindWindow("#32770", "コピーを保存")
+    '        If hWnd = IntPtr.Zero Then
+    '            ClosePdrErr()
+    '            Com.Sleep5(500)
+    '            cie.Refresh()
+    '            Com.Sleep5(1000)
+    '            Dim hWnd2 As IntPtr
+    '            hWnd2 = FindWindow("#32770", "Windows Internet Explorer")
 
-        Com.Sleep5(500)
-        SavePdf(csvFileName.ToString)
-        cie.Quit()
+    '            Dim hButton As IntPtr = FindWindowEx(hWnd2, IntPtr.Zero, "Button", "再試行(&R)")
+    '            SendMessage(hButton, BM.CLICK, 0, Nothing)
+    '            Com.Sleep5(waitT)
+    '            waitT = waitT + 1000
+    '            GoTo reD
+    '            Pub_Com.SleepAndWaitComplete(cie)
+    '            Pub_Com.SleepAndWaitComplete(cie)
+    '            Pub_Com.SleepAndWaitComplete(cie)
 
-        'Gsz_Thread_Test.Abort()
+    '        End If
 
-    End Sub
+    '        Com.Sleep5(500)
+    '        'SavePdf(csvFileName.ToString)
+    '        cie.Quit()
+
+    '        'Gsz_Thread_Test.Abort()
+
+    '    End Sub
 
     'Step 1 LOGIN IN
     Public Sub DoStep1_Login()
@@ -736,19 +741,19 @@ reD:
         Return Nothing
     End Function
 
-    Public Function GetPopupWindowPDF() As SHDocVw.InternetExplorerMedium
-        Dim ShellWindows As SHDocVw.ShellWindows = New SHDocVw.ShellWindows
-        For Each childIe As SHDocVw.InternetExplorerMedium In (ShellWindows)
-            System.Windows.Forms.Application.DoEvents()
-            Dim filename As String = System.IO.Path.GetFileNameWithoutExtension(childIe.FullName).ToLower()
-            If filename = "iexplore" Then
-                If CType(childIe, SHDocVw.InternetExplorerMedium).LocationURL.Contains("servlet") Then
-                    Return childIe
-                End If
-            End If
-        Next
-        Return GetPopupWindowPDF()
-    End Function
+    'Public Function GetPopupWindowPDF() As SHDocVw.InternetExplorerMedium
+    '    Dim ShellWindows As SHDocVw.ShellWindows = New SHDocVw.ShellWindows
+    '    For Each childIe As SHDocVw.InternetExplorerMedium In (ShellWindows)
+    '        System.Windows.Forms.Application.DoEvents()
+    '        Dim filename As String = System.IO.Path.GetFileNameWithoutExtension(childIe.FullName).ToLower()
+    '        If filename = "iexplore" Then
+    '            If CType(childIe, SHDocVw.InternetExplorerMedium).LocationURL.Contains("servlet") Then
+    '                Return childIe
+    '            End If
+    '        End If
+    '    Next
+    '    Return GetPopupWindowPDF()
+    'End Function
 
 
     Public Function HaveWindowPDF() As Boolean
@@ -912,59 +917,59 @@ reD:
     '    PDFMessageBW(csvFileName)
     'End Sub
 
-    Private Sub PDFBackgroundWorker_DoWork(ByVal sender As Object, ByVal e As System.ComponentModel.DoWorkEventArgs) Handles PDFBackgroundWorker.DoWork
-        Dim FileName As String = DirectCast(e.Argument, String)
+    'Private Sub PDFBackgroundWorker_DoWork(ByVal sender As Object, ByVal e As System.ComponentModel.DoWorkEventArgs) Handles PDFBackgroundWorker.DoWork
+    '    'Dim FileName As String = DirectCast(e.Argument, String)
 
-        'Save PDF
-        Dim cIe2 As SHDocVw.InternetExplorerMedium = GetPopupWindowPDF()
-        Pub_Com.SleepAndWaitComplete(cIe2, 100)
-        Pub_Com.SleepAndWaitComplete(cIe2, 100)
-        Pub_Com.SleepAndWaitComplete(cIe2, 100)
-        Pub_Com.SleepAndWaitComplete(cIe2, 100)
+    '    'Save PDF
+    '    Dim cIe2 As SHDocVw.InternetExplorerMedium = GetPopupWindowPDF()
+    '    Pub_Com.SleepAndWaitComplete(cIe2, 100)
+    '    Pub_Com.SleepAndWaitComplete(cIe2, 100)
+    '    Pub_Com.SleepAndWaitComplete(cIe2, 100)
+    '    Pub_Com.SleepAndWaitComplete(cIe2, 100)
 
-        Com.Sleep5(500)
-
-
-        CType(cIe2, SHDocVw.InternetExplorerMedium).ExecWB(SHDocVw.OLECMDID.OLECMDID_SAVEAS, SHDocVw.OLECMDEXECOPT.OLECMDEXECOPT_PROMPTUSER)
-        Com.Sleep5(500)
-        SavePdf(FileName)
-        Com.Sleep5(500)
-        cIe2.Quit()
-    End Sub
+    '    Com.Sleep5(500)
 
 
-    Private Sub SavePdf(ByVal csvFileName As String)
+    '    CType(cIe2, SHDocVw.InternetExplorerMedium).ExecWB(SHDocVw.OLECMDID.OLECMDID_SAVEAS, SHDocVw.OLECMDEXECOPT.OLECMDEXECOPT_PROMPTUSER)
+    '    Com.Sleep5(500)
+    '    'SavePdf(FileName)
+    '    Com.Sleep5(500)
+    '    cIe2.Quit()
+    'End Sub
 
-        Try
-            Dim pdfPath As String = ConfigurationManager.AppSettings("Pdf_Path").ToString()
 
-            If System.IO.File.Exists(pdfPath & csvFileName & ".pdf") Then
-                FileSystem.Rename(pdfPath & csvFileName & ".pdf", pdfPath & csvFileName & ".pdf" & ".bk." & Now.ToString("yyyyMMddHHmmss"))
-            End If
+    'Private Sub SavePdf(ByVal csvFileName As String)
 
-            Dim hWnd As IntPtr
-            Do While hWnd = IntPtr.Zero
-                hWnd = FindWindow("#32770", "コピーを保存")
-                Sleep(1)
-            Loop
+    '    Try
+    '        Dim pdfPath As String = ConfigurationManager.AppSettings("Pdf_Path").ToString()
 
-            Dim filePathComboBoxEx32 As IntPtr = FindWindowEx(hWnd, IntPtr.Zero, "ComboBoxEx32", String.Empty)
-            Dim filePathComboBox As IntPtr = FindWindowEx(filePathComboBoxEx32, IntPtr.Zero, "ComboBox", String.Empty)
-            Dim hEditfilePath As IntPtr = FindWindowEx(filePathComboBox, IntPtr.Zero, "Edit", String.Empty)
-            SendMessage(hEditfilePath, WM.SETTEXT, 0, New StringBuilder(pdfPath & csvFileName & ".pdf"))
+    '        If System.IO.File.Exists(pdfPath & csvFileName & ".pdf") Then
+    '            FileSystem.Rename(pdfPath & csvFileName & ".pdf", pdfPath & csvFileName & ".pdf" & ".bk." & Now.ToString("yyyyMMddHHmmss"))
+    '        End If
 
-            Dim saveButton As IntPtr = FindWindowEx(hWnd, IntPtr.Zero, "Button", "保存")
-            SendMessage(saveButton, BM.CLICK, 0, Nothing)
-            Com.Sleep5(1000)
-        Catch ex As Exception
+    '        Dim hWnd As IntPtr
+    '        Do While hWnd = IntPtr.Zero
+    '            hWnd = FindWindow("#32770", "コピーを保存")
+    '            Sleep(1)
+    '        Loop
 
-        End Try
+    '        Dim filePathComboBoxEx32 As IntPtr = FindWindowEx(hWnd, IntPtr.Zero, "ComboBoxEx32", String.Empty)
+    '        Dim filePathComboBox As IntPtr = FindWindowEx(filePathComboBoxEx32, IntPtr.Zero, "ComboBox", String.Empty)
+    '        Dim hEditfilePath As IntPtr = FindWindowEx(filePathComboBox, IntPtr.Zero, "Edit", String.Empty)
+    '        SendMessage(hEditfilePath, WM.SETTEXT, 0, New StringBuilder(pdfPath & csvFileName & ".pdf"))
 
-        If FindWindow("#32770", "コピーを保存") <> IntPtr.Zero Then
-            SavePdf(csvFileName)
-        End If
+    '        Dim saveButton As IntPtr = FindWindowEx(hWnd, IntPtr.Zero, "Button", "保存")
+    '        SendMessage(saveButton, BM.CLICK, 0, Nothing)
+    '        Com.Sleep5(1000)
+    '    Catch ex As Exception
 
-    End Sub
+    '    End Try
+
+    '    If FindWindow("#32770", "コピーを保存") <> IntPtr.Zero Then
+    '        SavePdf(csvFileName)
+    '    End If
+
+    'End Sub
 
 
 
