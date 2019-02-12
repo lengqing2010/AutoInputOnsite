@@ -84,6 +84,7 @@ Partial Class Menu
         Me.cbHyouji.TabIndex = 3
         Me.cbHyouji.Text = "明細表示"
         Me.cbHyouji.UseVisualStyleBackColor = True
+        Me.cbHyouji.Visible = False
         '
         'pb1
         '
@@ -166,7 +167,6 @@ Partial Class Menu
         Me.Name = "Menu"
         Me.Opacity = 0.9
         Me.Text = "「見出＆明細作成」・「納期指定発注」"
-        Me.TopMost = True
         Me.ResumeLayout(False)
         Me.PerformLayout()
 

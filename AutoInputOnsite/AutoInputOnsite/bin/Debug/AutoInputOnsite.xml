@@ -40,6 +40,78 @@ AutoInputOnsite
 	<param name="sender"></param>
 	<param name="e"></param>
 	<remarks></remarks>
+</member><member name="M:AutoInputOnsite.Menu.kanryou">
+	<summary>
+ 完了
+ </summary>
+	<remarks></remarks>
+</member><member name="M:AutoInputOnsite.Menu.StartAllJunbi">
+	<summary>
+ Start 準備
+ </summary>
+	<remarks></remarks>
+</member><member name="M:AutoInputOnsite.Menu.Timer1_Tick(System.Object,System.EventArgs)">
+	<summary>
+ Pro bar 
+ </summary>
+	<param name="sender"></param>
+	<param name="e"></param>
+	<remarks></remarks>
+</member><member name="M:AutoInputOnsite.Menu.Menu_Disposed(System.Object,System.EventArgs)">
+	<summary>
+ Menu_Disposed
+ </summary>
+	<param name="sender"></param>
+	<param name="e"></param>
+	<remarks></remarks>
+</member><member name="M:AutoInputOnsite.Menu.Menu_Load(System.Object,System.EventArgs)">
+	<summary>
+ Menu_Load
+ </summary>
+	<param name="sender"></param>
+	<param name="e"></param>
+	<remarks></remarks>
+</member><member name="M:AutoInputOnsite.Menu.BackgroundWorker_DoWork(System.Object,System.ComponentModel.DoWorkEventArgs)">
+	<summary>
+ Windows Object Something
+ </summary>
+	<param name="sender"></param>
+	<param name="e"></param>
+	<remarks></remarks>
+</member><member name="M:AutoInputOnsite.Com.Sleep5(System.Int32)">
+	<summary>
+ 共通Sleep
+ </summary>
+	<param name="Interval"></param>
+	<remarks></remarks>
+</member><member name="M:AutoInputOnsite.Com.NewWindowsCom">
+	<summary>
+ Window Form 自動追加内容
+ </summary>
+	<remarks></remarks>
+</member><member name="M:AutoInputOnsite.Com.NewNinnsyou(System.IntPtr)">
+	<summary>
+ 認証
+ </summary>
+	<param name="hWnd"></param>
+	<remarks></remarks>
+</member><member name="M:AutoInputOnsite.Com.NewFileSantaku(System.IntPtr,System.String)">
+	<summary>
+ ファイル選択
+ </summary>
+	<param name="hWnd"></param>
+	<param name="fileName"></param>
+	<remarks></remarks>
+</member><member name="M:AutoInputOnsite.Com.GetElement(mshtml.HTMLWindow2,System.String,System.String,System.String)">
+	<summary>
+ GetElement
+ </summary>
+	<param name="fra"></param>
+	<param name="tagName"></param>
+	<param name="keyName"></param>
+	<param name="keyTxt"></param>
+	<returns></returns>
+	<remarks></remarks>
 </member>
 </members>
 </doc>

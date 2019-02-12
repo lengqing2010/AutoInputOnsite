@@ -3,10 +3,8 @@ H:\WINSHARE\AutoInputOnsite\AutoInputOnsite\AutoInputOnsite\bin\Debug\AutoInputO
 H:\WINSHARE\AutoInputOnsite\AutoInputOnsite\AutoInputOnsite\bin\Debug\AutoInputOnsite.pdb
 H:\WINSHARE\AutoInputOnsite\AutoInputOnsite\AutoInputOnsite\bin\Debug\AutoInputOnsite.xml
 H:\WINSHARE\AutoInputOnsite\AutoInputOnsite\AutoInputOnsite\bin\Debug\Interop.SHDocVw.dll
-H:\WINSHARE\AutoInputOnsite\AutoInputOnsite\AutoInputOnsite\bin\Debug\Interop.Shell32.dll
 H:\WINSHARE\AutoInputOnsite\AutoInputOnsite\AutoInputOnsite\obj\Debug\ResolveAssemblyReference.cache
 H:\WINSHARE\AutoInputOnsite\AutoInputOnsite\AutoInputOnsite\obj\Debug\Interop.SHDocVw.dll
-H:\WINSHARE\AutoInputOnsite\AutoInputOnsite\AutoInputOnsite\obj\Debug\Interop.Shell32.dll
 H:\WINSHARE\AutoInputOnsite\AutoInputOnsite\AutoInputOnsite\obj\Debug\AutoInputOnsite.vbproj.ResolveComReference.cache
 H:\WINSHARE\AutoInputOnsite\AutoInputOnsite\AutoInputOnsite\obj\Debug\AutoInputOnsite.AutoImportCsv.resources
 H:\WINSHARE\AutoInputOnsite\AutoInputOnsite\AutoInputOnsite\obj\Debug\AutoInputOnsite.Menu.resources
@@ -17,3 +15,4 @@ H:\WINSHARE\AutoInputOnsite\AutoInputOnsite\AutoInputOnsite\obj\Debug\AutoInputO
 H:\WINSHARE\AutoInputOnsite\AutoInputOnsite\AutoInputOnsite\obj\Debug\AutoInputOnsite.exe
 H:\WINSHARE\AutoInputOnsite\AutoInputOnsite\AutoInputOnsite\obj\Debug\AutoInputOnsite.xml
 H:\WINSHARE\AutoInputOnsite\AutoInputOnsite\AutoInputOnsite\obj\Debug\AutoInputOnsite.pdb
+H:\WINSHARE\AutoInputOnsite\AutoInputOnsite\AutoInputOnsite\bin\Debug\Interop.MSXML2.dll

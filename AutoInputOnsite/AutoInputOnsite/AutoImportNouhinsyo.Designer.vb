@@ -46,9 +46,6 @@ Partial Class AutoImportNouhinsyo
         Me.RichTextBox1.TabIndex = 1
         Me.RichTextBox1.Text = ""
         '
-        'Timer1
-        '
-        '
         'AutoImportNouhinsyo
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
