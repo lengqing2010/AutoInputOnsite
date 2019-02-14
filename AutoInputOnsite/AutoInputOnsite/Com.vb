@@ -43,33 +43,33 @@ Public Class Com
 #End Region
 
 
-    Private Declare Function URLDownloadToFile Lib "urlmon" _
-       Alias "URLDownloadToFileA" _
-      (ByVal pCaller As Long, _
-       ByVal szURL As String, _
-       ByVal szFileName As String, _
-       ByVal dwReserved As Long, _
-       ByVal lpfnCB As Long) As Long
+    'Private Declare Function URLDownloadToFile Lib "urlmon" _
+    '   Alias "URLDownloadToFileA" _
+    '  (ByVal pCaller As Long, _
+    '   ByVal szURL As String, _
+    '   ByVal szFileName As String, _
+    '   ByVal dwReserved As Long, _
+    '   ByVal lpfnCB As Long) As Long
 
-    Private Const ERROR_SUCCESS As Long = 0
-    Private Const BINDF_GETNEWESTVERSION As Long = &H10
-    Private Const INTERNET_FLAG_RELOAD As Long = &H80000000
+    'Private Const ERROR_SUCCESS As Long = 0
+    'Private Const BINDF_GETNEWESTVERSION As Long = &H10
+    'Private Const INTERNET_FLAG_RELOAD As Long = &H80000000
 
-    Public Function DownloadFile(ByVal sSourceUrl As String, _
-    ByVal sLocalFile As String) As Boolean
+    'Public Function DownloadFile(ByVal sSourceUrl As String, _
+    'ByVal sLocalFile As String) As Boolean
 
-        'Download the file. BINDF_GETNEWESTVERSION forces 
-        'the API to download from the specified source. 
-        'Passing 0& as dwReserved causes the locally-cached 
-        'copy to be downloaded, if available. If the API 
-        'returns ERROR_SUCCESS (0), DownloadFile returns True.
-        DownloadFile = URLDownloadToFile(0&, _
-                                         sSourceUrl, _
-                                         sLocalFile, _
-                                         BINDF_GETNEWESTVERSION, _
-                                         0&) = ERROR_SUCCESS
+    '    'Download the file. BINDF_GETNEWESTVERSION forces 
+    '    'the API to download from the specified source. 
+    '    'Passing 0& as dwReserved causes the locally-cached 
+    '    'copy to be downloaded, if available. If the API 
+    '    'returns ERROR_SUCCESS (0), DownloadFile returns True.
+    '    DownloadFile = URLDownloadToFile(0&, _
+    '                                     sSourceUrl, _
+    '                                     sLocalFile, _
+    '                                     BINDF_GETNEWESTVERSION, _
+    '                                     0&) = ERROR_SUCCESS
 
-    End Function
+    'End Function
 
 
     Public folder_Hattyuu As String = ConfigurationManager.AppSettings("Folder_Hattyuu").ToString()
@@ -85,8 +85,14 @@ Public Class Com
     Public file_list_hattyuu As List(Of String)
     Public file_list_Nouki As List(Of String)
 
+    Public IsDebug As Boolean = (ConfigurationManager.AppSettings("Debug").ToString().ToUpper = "TRUE")
 
 
+    ''' <summary>
+    ''' INIT
+    ''' </summary>
+    ''' <param name="inLogFileName"></param>
+    ''' <remarks></remarks>
     Public Sub New(ByVal inLogFileName As String)
 
         logFileName = inLogFileName
@@ -95,6 +101,7 @@ Public Class Com
         If password = "" Then password = "qwer@123"
 
         'フォルダ読み
+        '発注
         If Not System.IO.Directory.Exists(folder_Hattyuu) Then
             My.Computer.FileSystem.CreateDirectory(folder_Hattyuu)
         End If
@@ -102,7 +109,7 @@ Public Class Com
         If Not System.IO.Directory.Exists(folder_Hattyuu_kanryou) Then
             My.Computer.FileSystem.CreateDirectory(folder_Hattyuu_kanryou)
         End If
-
+        '納期
         If Not System.IO.Directory.Exists(folder_Nouki) Then
             My.Computer.FileSystem.CreateDirectory(folder_Nouki)
         End If
@@ -110,7 +117,7 @@ Public Class Com
         If Not System.IO.Directory.Exists(folder_Nouki_kanryou) Then
             My.Computer.FileSystem.CreateDirectory(folder_Nouki_kanryou)
         End If
-
+        'PDF
         If Not System.IO.Directory.Exists(pdfPath) Then
             My.Computer.FileSystem.CreateDirectory(pdfPath)
         End If
@@ -132,8 +139,6 @@ Public Class Com
             Application.DoEvents()
         End While
     End Sub
-
-
 
     ''' <summary>
     ''' Window Form 自動追加内容
@@ -183,9 +188,8 @@ Public Class Com
         Loop
 
     End Sub
-
     ''' <summary>
-    ''' 認証
+    ''' 認証 Win7
     ''' </summary>
     ''' <param name="hWnd"></param>
     ''' <remarks></remarks>
@@ -217,11 +221,10 @@ Public Class Com
 
         Sleep5(200)
 reFind:
-
+        'ある場合、違うFORM Finded
         If FindWindowEx(hWnd, IntPtr.Zero, "ComboBoxEx32", String.Empty) = IntPtr.Zero Then
             hWnd = FindWindow("#32770", "アップロードするファイルの選択")
         End If
-
 
 
         Dim hComboBoxEx As IntPtr = FindWindowEx(hWnd, IntPtr.Zero, "ComboBoxEx32", String.Empty)
@@ -232,15 +235,16 @@ reFind:
             Sleep5(1)
             GoTo reFind
         Loop
-        SendMessage(hEdit, WM.SETTEXT, 0, New StringBuilder(fileName))
+
+        SendMessage(hEdit, WM.SETTEXT, 0, New StringBuilder(folder_Hattyuu & fileName))
         Dim hButton As IntPtr = FindWindowEx(hWnd, IntPtr.Zero, "Button", "開く(&O)")
         SendMessage(hButton, BM.CLICK, 0, Nothing)
+
     End Sub
 
     'MESSAGE 追加
     Public Sub AddMsg(ByVal msg As String)
-        'Me.RichTextBox1.Text = Now.ToString("yy/MM/dd HH:mm:ss") & "⇒:" & msg & vbNewLine & Me.RichTextBox1.Text
-        If ConfigurationManager.AppSettings("Debug").ToString().ToUpper = "TRUE" Then
+        If IsDebug Then
             WriteLog(Now.ToString("yy/MM/dd HH:mm:ss") & "⇒:" & msg, logFileName)
         End If
     End Sub
@@ -250,12 +254,9 @@ reFind:
         Dim varAppPath As String
         varAppPath = System.AppDomain.CurrentDomain.SetupInformation.ApplicationBase + "log"
         System.IO.Directory.CreateDirectory(varAppPath)
-        'TextBox1.Text = varAppPath
         Dim head As String
         head = System.DateTime.Now.Hour.ToString() + ":" + System.DateTime.Now.Minute.ToString()
         Msg = head + System.Environment.NewLine + Msg + System.Environment.NewLine
-        'Dim strDate As String
-        'strDate = System.DateTime.Now.ToString("yyyyMMdd")
         Dim strFile As String
         strFile = varAppPath + "\" + tmpfileName + ".log"
         Dim SW As System.IO.StreamWriter
@@ -272,11 +273,9 @@ reFind:
 
         If Not (strDirect Is Nothing) Then
             Dim mFileInfo As System.IO.FileInfo
-            'Dim mDir As System.IO.DirectoryInfo
             Dim mDirInfo As New System.IO.DirectoryInfo(strDirect)
             Try
                 For Each mFileInfo In mDirInfo.GetFiles(exName)
-                    'Debug.Print(mFileInfo.FullName)
                     flList.Add(mFileInfo.Name)
                 Next
             Catch ex As System.IO.DirectoryNotFoundException
@@ -289,36 +288,39 @@ reFind:
     End Function
 
     'Get Frame
-    Public Function GetFrameByName(ByRef webApp As SHDocVw.InternetExplorerMedium, ByVal name As String) As mshtml.HTMLWindow2
+    Public Function GetFrameByName(ByRef WebOrWindow As SHDocVw.InternetExplorerMedium, ByVal name As String) As mshtml.HTMLWindow2
 
-        SleepAndWaitComplete(webApp)
+        SleepAndWaitComplete(WebOrWindow)
 
         Try
-            Dim Doc As mshtml.HTMLDocument = CType(webApp.Document, mshtml.HTMLDocument)
+            Dim Doc As mshtml.HTMLDocument = CType(WebOrWindow.Document, mshtml.HTMLDocument)
+
             Dim length As Integer = Doc.frames.length
             Dim frames As mshtml.FramesCollection = Doc.frames
+
+            Dim frm As mshtml.HTMLWindow2
+            'Object 必要、 frames.item(i) iはInertger時 エラー
             Dim i As Object
+
             For i = 0 To length - 1
-                Dim frm As mshtml.HTMLWindow2 = CType(frames.item(i), mshtml.HTMLWindow2)
-                If frm.name = name Then
-                    Return frm
+                'frm = 
+                If CType(frames.item(i), mshtml.HTMLWindow2).name = name Then
+                    Return CType(frames.item(i), mshtml.HTMLWindow2)
                 End If
             Next
 
+            Dim wd As Object
             For i = 0 To length - 1
-                Dim frm As mshtml.HTMLWindow2 = CType(frames.item(i), mshtml.HTMLWindow2)
-                Dim wd As Object = GetFrameByName(frm, name)
+                frm = CType(frames.item(i), mshtml.HTMLWindow2)
+                wd = GetFrameByName(frm, name)
                 If wd IsNot Nothing Then
                     Return CType(wd, mshtml.HTMLWindow2)
                 End If
             Next
-
-            Return Nothing
         Catch ex As Exception
 
-            Return Nothing
         End Try
-
+        Return Nothing
     End Function
 
     'Get Frame
@@ -354,6 +356,7 @@ reFind:
         For i As Integer = 0 To 10
 
             Do Until webApp.ReadyState = WebBrowserReadyState.Complete AndAlso Not webApp.Busy
+
                 System.Windows.Forms.Application.DoEvents()
                 Sleep5(tmOut / 10)
                 i = 0
@@ -364,7 +367,6 @@ reFind:
                 Sleep5(tmOut / 10)
                 i = 0
             Loop
-
 
             Try
                 Dim Doc As mshtml.HTMLDocument = CType(webApp.Document, mshtml.HTMLDocument)
@@ -383,28 +385,6 @@ reFind:
 
         Next
 
-
-
-
-
-
-
-        'Try
-        '    'For i As Integer = 1 To tmOut
-        '    '    Sleep5(1)
-        '    '    System.Windows.Forms.Application.DoEvents()
-        '    'Next
-
-        '    For i As Integer = 0 To 100
-        '        Do Until webApp.ReadyState = WebBrowserReadyState.Complete AndAlso Not webApp.Busy
-        '            System.Windows.Forms.Application.DoEvents()
-        '            Sleep5(1)
-        '            i = 0
-        '        Loop
-        '        Sleep5(1)
-        '    Next
-        'Catch ex As Exception
-        'End Try
     End Sub
 
     'Get element and do soming
@@ -493,6 +473,8 @@ reFind:
         Dim eles As mshtml.IHTMLElementCollection
         Dim Doc As mshtml.HTMLDocument
         Doc = CType(fra.document, mshtml.HTMLDocument)
+
+
         eles = Doc.getElementsByTagName(tagName)
         For Each ele As mshtml.IHTMLElement In eles
             Try

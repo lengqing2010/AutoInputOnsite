@@ -1,5 +1,3 @@
-
-
 Imports System.ComponentModel
 Imports System.Runtime.InteropServices
 Imports System.Text
@@ -90,6 +88,7 @@ Public Class AutoImportNouhinsyo
         End If
 
         lv1 = CDec(90 / Pub_Com.file_list_Nouki.Count)
+        lv2 = lv1 / 15
 
         '一回目
         Dim firsOpenKbn As Boolean = True
@@ -113,30 +112,30 @@ Public Class AutoImportNouhinsyo
 
 
         'CSV ファイルｓ 取込
-        For zzz As Integer = 0 To Pub_Com.file_list_Nouki.Count - 1
+        For fileIdx As Integer = 0 To Pub_Com.file_list_Nouki.Count - 1
 
-            lv2 = lv1 / 15
+            Dim csvFileName As String = Pub_Com.file_list_Nouki(fileIdx).ToString.Trim
+            Dim csvNameSplitor() As String = csvFileName.Split("-"c)
 
-            Dim csvFileName As String = Pub_Com.file_list_Nouki(zzz).ToString.Trim
-            Dim csvFileNames() As String = Pub_Com.file_list_Nouki(zzz).ToString.Trim.Split("-"c)
             Dim 事業所, 得意先, 下店, 現場名, 備考, 日付連番 As String
-            事業所 = csvFileNames(0)
-            得意先 = csvFileNames(1)
-            下店 = csvFileNames(2)
-            現場名 = csvFileNames(3)
-            備考 = csvFileNames(4)
-            日付連番 = csvFileNames(5)
+            事業所 = csvNameSplitor(0)
+            得意先 = csvNameSplitor(1)
+            下店 = csvNameSplitor(2)
+            現場名 = csvNameSplitor(3)
+            備考 = csvNameSplitor(4)
+            日付連番 = csvNameSplitor(5)
 
 
+            '一回目ではなく 実行
             If firsOpenKbn = False Then
                 Pub_Com.GetElementBy(Ie, "fraHead", "input", "value", "絞込検索").click()
                 Pub_Com.SleepAndWaitComplete(Ie)
             End If
             firsOpenKbn = False
+
+
             AddProBar(lv2) '1
-
-
-            Pub_Com.AddMsg("取込：" & Pub_Com.file_list_Nouki(zzz).ToString.Trim)
+            Pub_Com.AddMsg("取込：" & Pub_Com.file_list_Nouki(fileIdx).ToString.Trim)
 
 
             '見積検索
@@ -153,6 +152,7 @@ Public Class AutoImportNouhinsyo
             Pub_Com.SleepAndWaitComplete(Ie)
             Pub_Com.SleepAndWaitComplete(Ie)
 
+
             '該当データがありません NEXT
             Dim fraTmp As mshtml.HTMLWindow2 = Pub_Com.GetFrameByName(Ie, "fraHyou")
             If fraTmp IsNot Nothing Then
@@ -163,28 +163,32 @@ Public Class AutoImportNouhinsyo
 
 
             'CSVファイル内容取込
-            Dim strData As String() = System.IO.File.ReadAllLines(Pub_Com.folder_Nouki & csvFileName)
+            Dim csvDataLines As String() = System.IO.File.ReadAllLines(Pub_Com.folder_Nouki & csvFileName)
             Dim code As String = ""
             Dim nouki As String = ""
 
             AddProBar(lv2) '3
 
-            'CSV LINES
-            For jjj As Integer = 0 To strData.Length - 1
 
-                If strData(jjj).Trim <> "" Then
+            Dim fra As mshtml.HTMLWindow2 = Pub_Com.GetFrameWait(Ie, "fraMitBody")
+            Dim Doc As mshtml.HTMLDocument = CType(fra.document, mshtml.HTMLDocument)
+            Dim eles As mshtml.IHTMLElementCollection = Doc.getElementsByTagName("input")
+
+            'Radio 明細Key
+            Dim cbEles As mshtml.IHTMLElementCollection = Doc.getElementsByName("strMeisaiKey")
+            '指定納期
+            Dim nouhinDateEles As mshtml.IHTMLElementCollection = Doc.getElementsByName("strSiteiNouhinDate")
+
+
+            'CSV LINES
+            For csvLinesIdx As Integer = 0 To csvDataLines.Length - 1
+
+                If csvDataLines(csvLinesIdx).Trim <> "" Then
 
                     'コード 納期
-                    code = strData(jjj).Split(","c)(1).Trim
-                    nouki = CDate(strData(jjj).Split(","c)(2).Trim).ToString("yyyy/MM/dd")
+                    code = csvDataLines(csvLinesIdx).Split(","c)(1).Trim
+                    nouki = CDate(csvDataLines(csvLinesIdx).Split(","c)(2).Trim).ToString("yyyy/MM/dd")
 
-
-                    Dim fra As mshtml.HTMLWindow2 = Pub_Com.GetFrameWait(Ie, "fraMitBody")
-                    Dim Doc As mshtml.HTMLDocument = CType(fra.document, mshtml.HTMLDocument)
-                    Dim eles As mshtml.IHTMLElementCollection = Doc.getElementsByTagName("input")
-
-                    Dim cbEles As mshtml.IHTMLElementCollection = Doc.getElementsByName("strMeisaiKey")
-                    Dim nouhinDateEles As mshtml.IHTMLElementCollection = Doc.getElementsByName("strSiteiNouhinDate")
 
                     For i As Integer = 0 To cbEles.length - 1
                         Dim tr As mshtml.IHTMLTableRow = CType(CType(cbEles.item(i), mshtml.IHTMLElement).parentElement.parentElement, mshtml.IHTMLTableRow)
@@ -196,7 +200,7 @@ Public Class AutoImportNouhinsyo
                         If td.innerText = code Then
                             Dim sel As mshtml.IHTMLSelectElement = CType(nouhinDateEles.item(i), mshtml.IHTMLSelectElement)
 
-                            For j As Integer = 0 To sel.length
+                            For j As Integer = 0 To sel.length - 1
                                 If CType(sel.item(j), mshtml.IHTMLOptionElement).value.IndexOf(nouki) > 0 Then
                                     CType(sel.item(j), mshtml.IHTMLOptionElement).selected = True
                                     isHaveDate = True
@@ -206,7 +210,7 @@ Public Class AutoImportNouhinsyo
 
 
                             If Not isHaveDate Then
-                                MsgBox("納品希望日：[" & nouki & "]がありません")
+                                MsgBox("コード：[" & code & "] 納品希望日：[" & nouki & "]がありません")
                                 Exit Sub
                             End If
                         End If

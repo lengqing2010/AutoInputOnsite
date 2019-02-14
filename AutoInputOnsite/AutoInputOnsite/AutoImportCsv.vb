@@ -222,6 +222,9 @@ Public Class AutoImportCsv
         Pub_Com.AddMsg("    見積内訳入力 CSV取込 参　照 CLICK")
 
         Dim fra1 As SHDocVw.InternetExplorerMedium = GetPopupWindow("OnSite", "fileYomikomiSiji.asp")
+        While fra1 Is Nothing
+            fra1 = GetPopupWindow("OnSite", "fileYomikomiSiji.asp")
+        End While
 
         Pub_Com.GetElementBy(fra1, "", "input", "value", "参　照").click()
 
