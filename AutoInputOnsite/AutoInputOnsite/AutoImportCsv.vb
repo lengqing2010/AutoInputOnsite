@@ -260,19 +260,22 @@ Public Class AutoImportCsv
         Pub_Com.SleepAndWaitComplete(Ie)
 
         '寸法入力
-        Pub_Com.SleepAndWaitComplete(Ie)
-        Pub_Com.AddMsg("    寸法入力 次　へ CLICK")
-        Pub_Com.GetElementBy(Ie, "fraMitBody", "input", "value", "次　へ").click()
-        Pub_Com.SleepAndWaitComplete(Ie)
-        Pub_Com.SleepAndWaitComplete(Ie)
-        Pub_Com.AddMsg("    寸法入力 次　へ CLICK")
-        Pub_Com.GetElementBy(Ie, "fraMitBody", "input", "value", "次　へ").click()
-        Pub_Com.SleepAndWaitComplete(Ie)
-        Pub_Com.SleepAndWaitComplete(Ie)
-        Pub_Com.AddMsg("    寸法入力 次　へ CLICK")
-        Pub_Com.GetElementBy(Ie, "fraMitBody", "input", "value", "次　へ").click()
-        Pub_Com.SleepAndWaitComplete(Ie)
-        Pub_Com.SleepAndWaitComplete(Ie)
+
+        If Pub_Com.GetElementByDo(Ie, "fraMitBody", "input", "value", "見積内訳入力へ") Is Nothing Then
+            Pub_Com.SleepAndWaitComplete(Ie)
+            Pub_Com.AddMsg("    寸法入力 次　へ CLICK")
+            Pub_Com.GetElementBy(Ie, "fraMitBody", "input", "value", "次　へ").click()
+            Pub_Com.SleepAndWaitComplete(Ie)
+            Pub_Com.SleepAndWaitComplete(Ie)
+            Pub_Com.AddMsg("    寸法入力 次　へ CLICK")
+            Pub_Com.GetElementBy(Ie, "fraMitBody", "input", "value", "次　へ").click()
+            Pub_Com.SleepAndWaitComplete(Ie)
+            Pub_Com.SleepAndWaitComplete(Ie)
+            Pub_Com.AddMsg("    寸法入力 次　へ CLICK")
+            Pub_Com.GetElementBy(Ie, "fraMitBody", "input", "value", "次　へ").click()
+            Pub_Com.SleepAndWaitComplete(Ie)
+            Pub_Com.SleepAndWaitComplete(Ie)
+        End If
         AddProBar(lv2) '6
         Pub_Com.AddMsg("    単価入力 見積内訳入力へ CLICK")
         Pub_Com.GetElementBy(Ie, "fraMitBody", "input", "value", "見積内訳入力へ").click()

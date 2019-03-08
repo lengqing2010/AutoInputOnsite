@@ -179,16 +179,25 @@ Public Class AutoImportNouhinsyo
             '指定納期
             Dim nouhinDateEles As mshtml.IHTMLElementCollection = Doc.getElementsByName("strSiteiNouhinDate")
 
+            Dim csvIdx, sameCdSuu, gamenSameCdSuu As Integer
 
             'CSV LINES
             For csvLinesIdx As Integer = 0 To csvDataLines.Length - 1
 
                 If csvDataLines(csvLinesIdx).Trim <> "" Then
-
                     'コード 納期
                     code = csvDataLines(csvLinesIdx).Split(","c)(1).Trim
                     nouki = CDate(csvDataLines(csvLinesIdx).Split(","c)(2).Trim).ToString("yyyy/MM/dd")
 
+                    sameCdSuu = 0
+                    gamenSameCdSuu = 0
+
+                    For csvIdx = 0 To csvLinesIdx
+
+                        If csvDataLines(csvIdx).Split(","c)(1).Trim = code Then
+                            sameCdSuu += 1
+                        End If
+                    Next
 
                     For i As Integer = 0 To cbEles.length - 1
                         Dim tr As mshtml.IHTMLTableRow = CType(CType(cbEles.item(i), mshtml.IHTMLElement).parentElement.parentElement, mshtml.IHTMLTableRow)
@@ -198,20 +207,29 @@ Public Class AutoImportNouhinsyo
                         Dim isHaveDate As Boolean = False
 
                         If td.innerText = code Then
-                            Dim sel As mshtml.IHTMLSelectElement = CType(nouhinDateEles.item(i), mshtml.IHTMLSelectElement)
 
-                            For j As Integer = 0 To sel.length - 1
-                                If CType(sel.item(j), mshtml.IHTMLOptionElement).value.IndexOf(nouki) > 0 Then
-                                    CType(sel.item(j), mshtml.IHTMLOptionElement).selected = True
-                                    isHaveDate = True
-                                    Exit For
-                                End If
-                            Next
+                            gamenSameCdSuu = gamenSameCdSuu + 1
 
+                            If sameCdSuu = gamenSameCdSuu Then
+
+
+                                Dim sel As mshtml.IHTMLSelectElement = CType(nouhinDateEles.item(i), mshtml.IHTMLSelectElement)
+
+                                For j As Integer = 0 To sel.length - 1
+                                    If CType(sel.item(j), mshtml.IHTMLOptionElement).value.IndexOf(nouki) > 0 Then
+                                        CType(sel.item(j), mshtml.IHTMLOptionElement).selected = True
+                                        isHaveDate = True
+                                        Exit For
+                                    End If
+                                Next
+                            Else
+                                Continue For
+                            End If
 
                             If Not isHaveDate Then
                                 MsgBox("コード：[" & code & "] 納品希望日：[" & nouki & "]がありません")
                                 Exit Sub
+
                             End If
                         End If
 
