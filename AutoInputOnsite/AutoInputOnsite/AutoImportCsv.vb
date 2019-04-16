@@ -29,8 +29,6 @@ Public Class AutoImportCsv
     Public Sub AddProBar(ByVal x As Double)
         _ProBar += x
     End Sub
-    'Public Declare Function timeGetTime Lib "winmm.dll" () As Long
-    'Public Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
 
 
 #Region "é©ìÆé¿çs"
@@ -143,7 +141,7 @@ Public Class AutoImportCsv
 
     'Step 1 êVãKå©êœÇ‡ÇË
     Public Sub DoStep1_SinkiMitumori()
-        Dim ShellWindows As New SHDocVw.ShellWindows
+
 
         Dim cIe As SHDocVw.InternetExplorerMedium = GetPopupWindow("OnSite", "mitSearch.asp")
         While cIe Is Nothing
@@ -322,9 +320,13 @@ Public Class AutoImportCsv
                 End If
             End If
         Next
+
+        ShellWindows = Nothing
+
         Return Nothing
     End Function
 
 #End Region
+
 
 End Class

@@ -29,7 +29,40 @@ Public Class AutoImportNouhinsyo
     End Sub
 
     Public insatu As Boolean = False
-    
+    '    Public Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
+
+    '#Region "Windows DLL"
+    '    <DllImport("user32.dll", CharSet:=CharSet.Auto, SetLastError:=True)> Public Shared Function FindWindow(ByVal lpClassName As String, ByVal lpWindowName As String) As IntPtr
+    '    End Function
+
+    '    <DllImport("user32.dll", CharSet:=CharSet.Auto, SetLastError:=True)> Private Shared Function FindWindowEx( _
+    '        ByVal parentHandle As IntPtr, _
+    '        ByVal childAfter As IntPtr, _
+    '        ByVal lclassName As String, _
+    '        ByVal windowTitle As String) As IntPtr
+    '    End Function
+
+    '    <DllImport("user32.dll", CharSet:=CharSet.Auto, SetLastError:=True)> Private Shared Function SendMessage( _
+    '        ByVal hWnd As IntPtr, _
+    '        ByVal Msg As Integer, _
+    '        ByVal wParam As Integer, _
+    '        ByVal lParam As StringBuilder) As Integer
+    '    End Function
+
+    '    <DllImport("user32.dll", CharSet:=CharSet.Auto, SetLastError:=True)> Private Shared Function IsWindowVisible( _
+    '        ByVal hWnd As IntPtr) As Boolean
+    '    End Function
+
+    '    Private Enum WM As Integer
+    '        SETTEXT = &HC
+    '    End Enum
+
+    '    Private Enum BM As Integer
+    '        CLICK = &HF5
+    '    End Enum
+
+    '#End Region
+
 
 #Region "自動実行"
 
@@ -46,18 +79,6 @@ Public Class AutoImportNouhinsyo
 
     '実行 MAIN
     Public Sub DoAll()
-
-        Dim innerHTML1 As String = ""
-        Dim action As String = ""
-        Dim action2 As String = ""
-        Dim fcw_formfile As String = ""
-        Dim fcw_datafile As String = ""
-
-        innerHTML1 = ""
-        action = ""
-        action2 = ""
-        fcw_formfile = ""
-        fcw_datafile = ""
 
         'SavePdf("aaaa.csv")
         Pub_Com = New Com("納期指定発注" & Now.ToString("yyyyMMddHHmmss"))
@@ -110,8 +131,8 @@ Public Class AutoImportNouhinsyo
                 Pub_Com.GetElementBy(Ie, "fraHead", "input", "value", "絞込検索").click()
                 Pub_Com.SleepAndWaitComplete(Ie)
             End If
-
             firsOpenKbn = False
+
 
             AddProBar(lv2) '1
             Pub_Com.AddMsg("取込：" & Pub_Com.file_list_Nouki(fileIdx).ToString.Trim)
@@ -127,7 +148,6 @@ Public Class AutoImportNouhinsyo
             If Not DoStep2_Set() Then
                 Continue For
             End If
-
             Pub_Com.SleepAndWaitComplete(Ie)
             Pub_Com.SleepAndWaitComplete(Ie)
             Pub_Com.SleepAndWaitComplete(Ie)
@@ -173,17 +193,16 @@ Public Class AutoImportNouhinsyo
                     gamenSameCdSuu = 0
 
                     For csvIdx = 0 To csvLinesIdx
+
                         If csvDataLines(csvIdx).Split(","c)(1).Trim = code Then
                             sameCdSuu += 1
                         End If
                     Next
 
                     For i As Integer = 0 To cbEles.length - 1
-
-                        Dim cb As mshtml.IHTMLElement = CType(cbEles.item(i), mshtml.IHTMLElement)
-                        Dim tr As mshtml.IHTMLTableRow = CType(cb.parentElement.parentElement, mshtml.IHTMLTableRow)
+                        Dim tr As mshtml.IHTMLTableRow = CType(CType(cbEles.item(i), mshtml.IHTMLElement).parentElement.parentElement, mshtml.IHTMLTableRow)
                         Dim td As mshtml.HTMLTableCell = CType(tr.cells.item(1), mshtml.HTMLTableCell)
-                        Dim table As mshtml.IHTMLTable = CType(cb.parentElement.parentElement.parentElement.parentElement, mshtml.IHTMLTable)
+                        Dim table As mshtml.IHTMLTable = CType(CType(cbEles.item(i), mshtml.IHTMLElement).parentElement.parentElement.parentElement.parentElement, mshtml.IHTMLTable)
 
                         Dim isHaveDate As Boolean = False
 
@@ -193,18 +212,15 @@ Public Class AutoImportNouhinsyo
 
                             If sameCdSuu = gamenSameCdSuu Then
 
+
                                 Dim sel As mshtml.IHTMLSelectElement = CType(nouhinDateEles.item(i), mshtml.IHTMLSelectElement)
 
                                 For j As Integer = 0 To sel.length - 1
-
-                                    Dim opEle As mshtml.IHTMLOptionElement = CType(sel.item(j), mshtml.IHTMLOptionElement)
-
-                                    If opEle.value.IndexOf(nouki) > 0 Then
-                                        opEle.selected = True
+                                    If CType(sel.item(j), mshtml.IHTMLOptionElement).value.IndexOf(nouki) > 0 Then
+                                        CType(sel.item(j), mshtml.IHTMLOptionElement).selected = True
                                         isHaveDate = True
                                         Exit For
                                     End If
-
                                 Next
                             Else
                                 Continue For
@@ -222,8 +238,8 @@ Public Class AutoImportNouhinsyo
                 End If
 
             Next
-            AddProBar(lv2) '4
 
+            AddProBar(lv2) '4
 
             Pub_Com.GetElementBy(Ie, "fraMitBody", "select", "name", "strBukkenKbn").setAttribute("value", "01")
             Pub_Com.GetElementBy(Ie, "fraMitBody", "input", "value", "発　注").click()
@@ -233,6 +249,7 @@ Public Class AutoImportNouhinsyo
             AddProBar(lv2) '5
 
 
+
             Pub_Com.GetElementBy(Ie, "fraMitBody", "input", "value", "発注結果照会へ").click()
             Pub_Com.SleepAndWaitComplete(Ie)
             AddProBar(lv2) '6
@@ -240,36 +257,38 @@ Public Class AutoImportNouhinsyo
             If insatu Then
 
 Reback:
-
-                innerHTML1 = ""
-                action = ""
-                action2 = ""
-                fcw_formfile = ""
-                fcw_datafile = ""
+                Dim innerHTML1 As String = ""
+                Dim action As String = ""
+                Dim action2 As String = ""
+                Dim fcw_formfile As String = ""
+                Dim fcw_datafile As String = ""
 
                 Com.Sleep5(500)
 
                 Pub_Com.GetElementBy(Ie, "fraMitBody", "input", "value", "結果印刷").click()
+
+
 relo:
                 Dim childIe As SHDocVw.InternetExplorerMedium = GetPrintPage()
+
                 If childIe Is Nothing Then
                     GoTo relo
-                Else
-                    childIe.Visible = False
                 End If
+
+                childIe.Visible = False
 
                 While CType(childIe, SHDocVw.InternetExplorerMedium).ReadyState <> SHDocVw.tagREADYSTATE.READYSTATE_COMPLETE
                     Application.DoEvents()
+                    '    Com.Sleep5(1)
                 End While
 
+
                 childIe.Stop()
-
-                Com.Sleep5(900)
-
+                Com.Sleep(1000)
+                Com.Sleep5(1)
+                'childIe.GoBack()
                 Try
-
                     Dim form As mshtml.HTMLFormElement
-
                     form = CType(CType(CType(childIe.Document, mshtml.HTMLDocument).body.document, mshtml.HTMLDocument).forms.item(0), mshtml.HTMLFormElement)
                     action = form.action
 
@@ -300,12 +319,12 @@ relo:
 
 
 
-                If Action = "" Then
+                If action = "" Then
                     GoTo relo
                 End If
                 Pub_Com.SleepAndWaitComplete(Ie)
 
-                Dim url1 As String = Action & "?fcw-driver=FCPC&fcw-formdownload=yes&fcw-newsession=yes&fcw-destination=client&fcw-overlay=3&fcw-endsession=yes&fcw-formfile=" & fcw_formfile & "&fcw-datafile=" & fcw_datafile
+                Dim url1 As String = action & "?fcw-driver=FCPC&fcw-formdownload=yes&fcw-newsession=yes&fcw-destination=client&fcw-overlay=3&fcw-endsession=yes&fcw-formfile=" & fcw_formfile & "&fcw-datafile=" & fcw_datafile
 
                 Dim url2 As String = "" ' = action2
                 Dim bodyStr As Object
@@ -369,6 +388,10 @@ relo:
 
     End Sub
 
+    Function DownLoadPDF()
+
+
+    End Function
 
     Function GetPrintPage() As SHDocVw.InternetExplorerMedium
 
@@ -376,10 +399,13 @@ relo:
 
 reloIt:
 
+
+
         For Each childIe As SHDocVw.InternetExplorerMedium In ShellWindows
 
             Com.Sleep5(1)
             System.Windows.Forms.Application.DoEvents()
+            'Dim filename As String = System.IO.Path.GetFileNameWithoutExtension(childIe.FullName).ToLower()
 
             If InStr(childIe.FullName.ToLower(), "iexplore.exe") > 0 Then
 
@@ -393,16 +419,14 @@ reloIt:
                         Application.DoEvents()
                         Com.Sleep5(1)
                     End While
-
                     childIe.Stop()
-
                     ShellWindows = Nothing
                     Return childIe
-
                 End If
             End If
         Next
 
+  
         Com.Sleep5(1)
 
         'Return Nothing
@@ -425,7 +449,7 @@ reloIt:
                 End If
             End If
         Next
-        ShellWindows = Nothing
+
         Return Nothing
 
     End Function
@@ -547,13 +571,15 @@ reloIt:
 
     'Step 1 新規見積もり
     Public Sub DoStep1_PoupuSentaku(ByVal 事業所 As String, ByVal 得意先 As String, ByVal 下店 As String, ByVal 現場名 As String, ByVal 備考 As String, ByVal 日付連番 As String, ByVal fl As String)
-
+        Dim ShellWindows As New SHDocVw.ShellWindows
         Try
 
             Pub_Com.AddMsg("見積検索 POPUP")
             Dim cIe As SHDocVw.InternetExplorerMedium = GetPopupWindow("OnSite", "mitSearch.asp")
+
             While cIe Is Nothing
                 Com.Sleep5(100)
+                ' Com.Sleep5(5100)
                 cIe = GetPopupWindow("OnSite", "mitSearch.asp")
             End While
 
@@ -692,15 +718,12 @@ reloIt:
                         If CType(childIe.Document, mshtml.HTMLDocument).url.Contains(fileNameKey) Then
                             Pub_Com.SleepAndWaitComplete(childIe)
                             Com.Sleep5(500)
-                            ShellWindows = Nothing
-                            childIe.Visible = False
                             Return childIe
                         End If
                     End If
                 End If
             End If
         Next
-        ShellWindows = Nothing
         Return Nothing
     End Function
 

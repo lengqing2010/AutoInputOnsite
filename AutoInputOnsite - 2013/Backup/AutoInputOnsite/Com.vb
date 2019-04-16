@@ -43,119 +43,33 @@ Public Class Com
 #End Region
 
 
-#Region "Sleep方法"
+    'Private Declare Function URLDownloadToFile Lib "urlmon" _
+    '   Alias "URLDownloadToFileA" _
+    '  (ByVal pCaller As Long, _
+    '   ByVal szURL As String, _
+    '   ByVal szFileName As String, _
+    '   ByVal dwReserved As Long, _
+    '   ByVal lpfnCB As Long) As Long
 
+    'Private Const ERROR_SUCCESS As Long = 0
+    'Private Const BINDF_GETNEWESTVERSION As Long = &H10
+    'Private Const INTERNET_FLAG_RELOAD As Long = &H80000000
 
-    'CUP 仕様少し方法
-    Private Const WAIT_ABANDONED& = &H80&
-    Private Const WAIT_ABANDONED_0& = &H80&
-    Private Const WAIT_FAILED& = -1&
-    Private Const WAIT_IO_COMPLETION& = &HC0&
-    Private Const WAIT_OBJECT_0& = 0
-    Private Const WAIT_OBJECT_1& = 1
-    Private Const WAIT_TIMEOUT& = &H102&
-    Private Const INFINITE = &HFFFF
-    Private Const ERROR_ALREADY_EXISTS = 183&
-    Private Const QS_HOTKEY& = &H80
-    Private Const QS_KEY& = &H1
-    Private Const QS_MOUSEBUTTON& = &H4
-    Private Const QS_MOUSEMOVE& = &H2
-    Private Const QS_PAINT& = &H20
-    Private Const QS_POSTMESSAGE& = &H8
-    Private Const QS_SENDMESSAGE& = &H40
-    Private Const QS_TIMER& = &H10
-    Private Const QS_MOUSE& = (QS_MOUSEMOVE Or QS_MOUSEBUTTON)
-    Private Const QS_INPUT& = (QS_MOUSE Or QS_KEY)
-    Private Const QS_ALLEVENTS& = (QS_INPUT Or QS_POSTMESSAGE Or QS_TIMER Or QS_PAINT Or QS_HOTKEY)
-    Private Const QS_ALLINPUT& = (QS_SENDMESSAGE Or QS_PAINT Or QS_TIMER Or QS_POSTMESSAGE Or QS_MOUSEBUTTON Or QS_MOUSEMOVE Or QS_HOTKEY Or QS_KEY)
+    'Public Function DownloadFile(ByVal sSourceUrl As String, _
+    'ByVal sLocalFile As String) As Boolean
 
-    Private Const UNITS = 4294967296.0#
-    Private Const MAX_LONG = -2147483648.0#
+    '    'Download the file. BINDF_GETNEWESTVERSION forces 
+    '    'the API to download from the specified source. 
+    '    'Passing 0& as dwReserved causes the locally-cached 
+    '    'copy to be downloaded, if available. If the API 
+    '    'returns ERROR_SUCCESS (0), DownloadFile returns True.
+    '    DownloadFile = URLDownloadToFile(0&, _
+    '                                     sSourceUrl, _
+    '                                     sLocalFile, _
+    '                                     BINDF_GETNEWESTVERSION, _
+    '                                     0&) = ERROR_SUCCESS
 
-    Private Declare Function CreateWaitableTimer Lib "kernel32" Alias "CreateWaitableTimerA" (ByVal lpSemaphoreAttributes As Long, ByVal bManualReset As Long, ByVal lpName As String) As Long
-    Private Declare Function OpenWaitableTimer Lib "kernel32" Alias "OpenWaitableTimerA" (ByVal dwDesiredAccess As Long, ByVal bInheritHandle As Long, ByVal lpName As String) As Long
-    Private Declare Function SetWaitableTimer Lib "kernel32" (ByVal hTimer As Long, ByVal lpDueTime As FILETIME, ByVal lPeriod As Long, ByVal pfnCompletionRoutine As Long, ByVal lpArgToCompletionRoutine As Long, ByVal fResume As Long) As Long
-    Private Declare Function CancelWaitableTimer Lib "kernel32" (ByVal hTimer As Long)
-    Private Declare Function CloseHandle Lib "kernel32" (ByVal hObject As Long) As Long
-    Private Declare Function WaitForSingleObject Lib "kernel32" (ByVal hHandle As Long, ByVal dwMilliseconds As Long) As Long
-    Private Declare Function MsgWaitForMultipleObjects Lib "user32" (ByVal nCount As Long, ByVal pHandles As Long, ByVal fWaitAll As Long, ByVal dwMilliseconds As Long, ByVal dwWakeMask As Long) As Long
-
-    Private Shared mlTimer As Long
-    Private Structure FILETIME
-        Dim dwLowDateTime As Long
-        Dim dwHighDateTime As Long
-    End Structure
-
-    ''' <summary>
-    ''' 共通Sleep 現状仕様無し
-    ''' </summary>
-    ''' <param name="Interval"></param>
-    ''' <remarks></remarks>
-    Public Shared Sub Sleep5bk(ByVal Interval As Integer)
-        Dim __time As DateTime = DateTime.Now
-        Dim __Span As Int64 = Interval * 10000
-        While (DateTime.Now.Ticks - __time.Ticks < __Span)
-            Application.DoEvents()
-            System.Threading.Thread.Sleep(0)
-        End While
-    End Sub
-
-
-    Public Shared Sub Sleep5(ByVal MilliSeconds As Long)
-        On Error GoTo ErrHandler
-        Dim ft As FILETIME
-        Dim lBusy As Long
-        Dim lRet As Long
-        Dim dblDelay As Double
-        Dim dblDelayLow As Double
-
-        mlTimer = CreateWaitableTimer(0, True, "AutoInputOnsite_Timer" & Format$(Now(), "NNSS"))
-
-        If Err.LastDllError <> ERROR_ALREADY_EXISTS Then
-            ft.dwLowDateTime = -1
-            ft.dwHighDateTime = -1
-            lRet = SetWaitableTimer(mlTimer, ft, 0, 0, 0, 0)
-        End If
-
-        ' Convert the Units to nanoseconds.
-        dblDelay = CDbl(MilliSeconds) * 10000.0#
-
-        ' By setting the high/low time to a negative number, it tells
-        ' the Wait (in SetWaitableTimer) to use an offset time as
-        ' opposed to a hardcoded time. If it were positive, it would
-        ' try to convert the value to GMT.
-        ft.dwHighDateTime = -CLng(dblDelay / UNITS) - 1
-        dblDelayLow = -UNITS * (dblDelay / UNITS - Fix(CStr(dblDelay / UNITS)))
-
-        If dblDelayLow < MAX_LONG Then dblDelayLow = UNITS + dblDelayLow
-
-        ft.dwLowDateTime = CLng(dblDelayLow)
-        lRet = SetWaitableTimer(mlTimer, ft, 0, 0, 0, False)
-
-        Do
-            ' QS_ALLINPUT means that MsgWaitForMultipleObjects will
-            ' return every time the thread in which it is running gets
-            ' a message. If you wanted to handle messages in here you could,
-            ' but by calling Doevents you are letting DefWindowProc
-            ' do its normal windows message handling---Like DDE, etc.
-            lBusy = MsgWaitForMultipleObjects(1, mlTimer, False, INFINITE, QS_ALLINPUT&)
-            Application.DoEvents()
-
-        Loop Until lBusy = WAIT_OBJECT_0
-
-        ' Close the handles when you are done with them.
-        CloseHandle(mlTimer)
-        mlTimer = 0
-        Exit Sub
-
-ErrHandler:
-        'Err.Raise(Err.Number, Err.Source, "[clsWaitableTimer.Wait]" & Err.Description)
-
-    End Sub
-
-#End Region
-
-
+    'End Function
 
 
     Public folder_Hattyuu As String = ConfigurationManager.AppSettings("Folder_Hattyuu").ToString()
@@ -213,7 +127,18 @@ ErrHandler:
 
     End Sub
 
-
+    ''' <summary>
+    ''' 共通Sleep
+    ''' </summary>
+    ''' <param name="Interval"></param>
+    ''' <remarks></remarks>
+    Public Shared Sub Sleep5(ByVal Interval As Integer)
+        Dim __time As DateTime = DateTime.Now
+        Dim __Span As Int64 = Interval * 10000
+        While (DateTime.Now.Ticks - __time.Ticks < __Span)
+            Application.DoEvents()
+        End While
+    End Sub
 
     ''' <summary>
     ''' Window Form 自動追加内容
@@ -231,8 +156,6 @@ ErrHandler:
 
         Dim hWnd As IntPtr
         Do While hWnd = IntPtr.Zero
-
-            System.Threading.Thread.Sleep(0)
 
             '認証情報
             If hWnd = IntPtr.Zero Then
@@ -254,16 +177,22 @@ ErrHandler:
                 hWnd = IntPtr.Zero
             End If
 
+            If hWnd = IntPtr.Zero Then
+                hWnd = FindWindow("#32770", "Internet Explorer")
+                If hWnd <> IntPtr.Zero Then
+                    NewStopErrDg(hWnd)
+                    hatyuu_list_idx += 1
+                End If
 
-            'プログラムを終了します
-            'If hWnd = IntPtr.Zero Then
-            '    hWnd = FindWindow("#32770", "Internet Explorer")
-            '    If hWnd <> IntPtr.Zero Then
-            '        NewStopErrDg(hWnd)
-            '    End If
+                hWnd = IntPtr.Zero
+            End If
+
+
+            'SAVE PDF
+            'If PdfSavePageCtrlS(file_list_Nouki(nouki_list_idx)) Then
+            '    nouki_list_idx += 1
             '    hWnd = IntPtr.Zero
             'End If
-
             System.Windows.Forms.Application.DoEvents()
             Sleep5(10)
 
@@ -325,11 +254,6 @@ reFind:
 
     End Sub
 
-    ''' <summary>
-    ''' プログラムを終了します
-    ''' </summary>
-    ''' <param name="hWnd"></param>
-    ''' <remarks></remarks>
     Public Sub NewStopErrDg(ByVal hWnd As IntPtr)
         Dim DirectUIHWND As IntPtr = FindWindowEx(hWnd, IntPtr.Zero, "DirectUIHWND", String.Empty)
         Dim CtrlNotifySink1 As IntPtr = FindWindowEx(DirectUIHWND, IntPtr.Zero, "CtrlNotifySink", String.Empty)
@@ -342,6 +266,11 @@ reFind:
         Dim CtrlNotifySink8 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink7, "CtrlNotifySink", String.Empty)
         Dim CtrlNotifySink9 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink8, "CtrlNotifySink", String.Empty)
         Dim CtrlNotifySink10 As IntPtr = FindWindowEx(DirectUIHWND, CtrlNotifySink9, "CtrlNotifySink", String.Empty)
+
+        'Dim hEdit As IntPtr = FindWindowEx(CtrlNotifySink7, IntPtr.Zero, "Edit", String.Empty)
+        'SendMessage(hEdit, WM.SETTEXT, 0, New StringBuilder(user))
+        'Dim hEdit1 As IntPtr = FindWindowEx(CtrlNotifySink8, IntPtr.Zero, "Edit", String.Empty)
+        'SendMessage(hEdit1, WM.SETTEXT, 0, New StringBuilder(password))
         Dim hEdit2 As IntPtr = FindWindowEx(CtrlNotifySink10, IntPtr.Zero, "Button", "プログラムを終了します")
         SendMessage(hEdit2, BM.CLICK, 0, Nothing)
     End Sub
@@ -541,6 +470,16 @@ reFind:
             Sleep5(200)
         Next
 
+        'webApp.Refresh()
+
+        'For i As Integer = 1 To 10
+        '    fra = GetFrameByName(webApp, name)
+        '    If fra IsNot Nothing Then
+        '        Return fra
+        '    End If
+        '    Sleep5(200)
+        'Next
+
         Return Nothing
 
     End Function
@@ -598,9 +537,6 @@ reFind:
         Return Nothing
 
     End Function
-
-
-
 
 
 

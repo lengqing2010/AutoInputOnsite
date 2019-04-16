@@ -32,7 +32,7 @@ Namespace My
         
         <Global.System.Diagnostics.DebuggerStepThroughAttribute()>  _
         Protected Overrides Sub OnCreateMainForm()
-            Me.MainForm = Global.AutoInputOnsite.AutoImportCsv
+            Me.MainForm = Global.AutoInputOnsite.Menu
         End Sub
     End Class
 End Namespace

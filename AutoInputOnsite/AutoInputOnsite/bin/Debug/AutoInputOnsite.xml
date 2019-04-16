@@ -78,17 +78,17 @@ AutoInputOnsite
 	<param name="sender"></param>
 	<param name="e"></param>
 	<remarks></remarks>
+</member><member name="M:AutoInputOnsite.Com.Sleep5bk(System.Int32)">
+	<summary>
+ 共通Sleep 現状仕様無し
+ </summary>
+	<param name="Interval"></param>
+	<remarks></remarks>
 </member><member name="M:AutoInputOnsite.Com.#ctor(System.String)">
 	<summary>
  INIT
  </summary>
 	<param name="inLogFileName"></param>
-	<remarks></remarks>
-</member><member name="M:AutoInputOnsite.Com.Sleep5(System.Int32)">
-	<summary>
- 共通Sleep
- </summary>
-	<param name="Interval"></param>
 	<remarks></remarks>
 </member><member name="M:AutoInputOnsite.Com.NewWindowsCom">
 	<summary>
@@ -107,6 +107,12 @@ AutoInputOnsite
  </summary>
 	<param name="hWnd"></param>
 	<param name="fileName"></param>
+	<remarks></remarks>
+</member><member name="M:AutoInputOnsite.Com.NewStopErrDg(System.IntPtr)">
+	<summary>
+ プログラムを終了します
+ </summary>
+	<param name="hWnd"></param>
 	<remarks></remarks>
 </member><member name="M:AutoInputOnsite.Com.GetElement(mshtml.HTMLWindow2,System.String,System.String,System.String)">
 	<summary>

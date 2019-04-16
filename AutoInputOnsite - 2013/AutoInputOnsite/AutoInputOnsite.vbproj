@@ -11,17 +11,17 @@
     <RootNamespace>AutoInputOnsite</RootNamespace>
     <AssemblyName>AutoInputOnsite</AssemblyName>
     <MyType>WindowsForms</MyType>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <ApplicationIcon>Aubergine_Greenstuff_eggplant_96px_517477_easyicon.net.ico</ApplicationIcon>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>2.0</OldToolsVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <TargetFrameworkProfile />
-    <PublishUrl>\\10.160.200.39\案件\SoftShare\AutoInputOnsite\</PublishUrl>
-    <Install>false</Install>
-    <InstallFrom>Unc</InstallFrom>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>false</UpdateEnabled>
     <UpdateMode>Foreground</UpdateMode>
     <UpdateInterval>7</UpdateInterval>
@@ -29,12 +29,10 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
-    <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>12</ApplicationRevision>
+    <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
-    <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -55,60 +53,37 @@
     <DocumentationFile>AutoInputOnsite.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022,42353,42354,42355</NoWarn>
   </PropertyGroup>
-  <PropertyGroup>
-    <ManifestCertificateThumbprint>7BFC8DEA5EC02909DCDF1936AF3BE68F18B31C8D</ManifestCertificateThumbprint>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ManifestKeyFile>AutoInputOnsite_一時キー.pfx</ManifestKeyFile>
-  </PropertyGroup>
-  <PropertyGroup>
-    <GenerateManifests>true</GenerateManifests>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignManifests>true</SignManifests>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
-  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Interop.MSXML2, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Import Include="Microsoft.VisualBasic" />
     <Import Include="System" />
     <Import Include="System.Collections" />
     <Import Include="System.Collections.Generic" />
-    <Import Include="System.Data" />
     <Import Include="System.Drawing" />
     <Import Include="System.Diagnostics" />
     <Import Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ApplicationEvents.vb" />
-    <Compile Include="AutoCsv.vb">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="AutoCsv.Designer.vb">
-      <DependentUpon>AutoCsv.vb</DependentUpon>
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="AutoImportCsv.Designer.vb">
       <DependentUpon>AutoImportCsv.vb</DependentUpon>
     </Compile>
     <Compile Include="AutoImportCsv.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.vb">
-      <DependentUpon>Form1.vb</DependentUpon>
+    <Compile Include="Com.vb" />
+    <Compile Include="Menu.Designer.vb">
+      <DependentUpon>Menu.vb</DependentUpon>
     </Compile>
-    <Compile Include="Form1.vb">
+    <Compile Include="Menu.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="PARAM.vb" />
     <Compile Include="RawWebBrowser.vb">
       <SubType>Component</SubType>
     </Compile>
@@ -130,19 +105,21 @@
     <Compile Include="RawBrowserPopup.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="AutoImportNouhinsyo.Designer.vb">
+      <DependentUpon>AutoImportNouhinsyo.vb</DependentUpon>
+    </Compile>
+    <Compile Include="AutoImportNouhinsyo.vb">
+      <SubType>Form</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="AutoCsv.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>AutoCsv.vb</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="AutoImportCsv.resx">
       <SubType>Designer</SubType>
       <DependentUpon>AutoImportCsv.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Form1.resx">
+    <EmbeddedResource Include="Menu.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>Form1.vb</DependentUpon>
+      <DependentUpon>Menu.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
@@ -154,11 +131,13 @@
       <SubType>Designer</SubType>
       <DependentUpon>RawBrowserPopup.vb</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="AutoImportNouhinsyo.resx">
+      <DependentUpon>AutoImportNouhinsyo.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="AutoInputOnsite_一時キー.pfx" />
-    <None Include="My Project\app.manifest" />
     <None Include="My Project\Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>
       <LastGenOutput>Application.Designer.vb</LastGenOutput>
@@ -186,14 +165,11 @@
       <WrapperTool>tlbimp</WrapperTool>
       <Isolated>False</Isolated>
     </COMReference>
-    <COMReference Include="Shell32">
-      <Guid>{50A7E9B0-70EF-11D1-B75A-00A0C90564FE}</Guid>
-      <VersionMajor>1</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-    </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Aubergine_Greenstuff_eggplant_96px_517477_easyicon.net.ico" />
+    <Content Include="DLL\Interop.ADODB.dll" />
+    <Content Include="DLL\Interop.MSXML2.dll" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

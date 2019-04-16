@@ -22,16 +22,40 @@ Partial Class AutoImportCsv
     'コード エディタを使って変更しないでください。
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Me.btnRun = New System.Windows.Forms.Button
+        Me.RichTextBox1 = New System.Windows.Forms.RichTextBox
         Me.SuspendLayout()
+        '
+        'btnRun
+        '
+        Me.btnRun.Location = New System.Drawing.Point(0, 0)
+        Me.btnRun.Name = "btnRun"
+        Me.btnRun.Size = New System.Drawing.Size(75, 23)
+        Me.btnRun.TabIndex = 0
+        Me.btnRun.Text = "自動"
+        Me.btnRun.UseVisualStyleBackColor = True
+        '
+        'RichTextBox1
+        '
+        Me.RichTextBox1.Font = New System.Drawing.Font("Meiryo UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(128, Byte))
+        Me.RichTextBox1.Location = New System.Drawing.Point(0, 29)
+        Me.RichTextBox1.Name = "RichTextBox1"
+        Me.RichTextBox1.Size = New System.Drawing.Size(996, 533)
+        Me.RichTextBox1.TabIndex = 1
+        Me.RichTextBox1.Text = ""
         '
         'AutoImportCsv
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(941, 430)
+        Me.ClientSize = New System.Drawing.Size(1008, 562)
+        Me.Controls.Add(Me.RichTextBox1)
+        Me.Controls.Add(Me.btnRun)
         Me.Name = "AutoImportCsv"
-        Me.Text = "AutoImportCsv"
+        Me.Text = "見出＆明細作成"
         Me.ResumeLayout(False)
 
     End Sub
+    Friend WithEvents btnRun As System.Windows.Forms.Button
+    Friend WithEvents RichTextBox1 As System.Windows.Forms.RichTextBox
 End Class
